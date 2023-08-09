@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;700&display=swap');  /* Source Code Pro font import */
+
+/* Existing Styles */
+@import './base.css';
+
+body {
+  background-color: #212529; /* Dark background */
+  color: #f6f8fa; /* Light text for contrast against dark background */
+  font-family: 'Source Code Pro', monospace; /* Set the default font */
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: #d1d1d1;  /* Very light gray color for hyperlinks */
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2); /* Adjust if needed for better visibility */
+    text-decoration: underline;
+    color: #b0b0b0; /* A darker shade of gray for hover */
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #00a86b; /* Green color for headers */
+}
+
+/* Responsive styling */
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+}
+
+/* Optional: Style the main content container with a shadow and some spacing */
+.main-content {
+  background: #333; /* Darker background for content container */
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  border-radius: 8px; /* Rounded corners for the container */
+  margin: 20px 0;
+}

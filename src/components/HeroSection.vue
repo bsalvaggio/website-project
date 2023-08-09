@@ -36,6 +36,7 @@
     align-items: center;
     justify-content: center;
     height: 80vh; /* Adjust this value as needed */
+    width: auto;      /* Adjust as necessary */
     background: url('path_to_your_background_image.jpg') no-repeat center center;
     background-size: cover;
     color: white; /* Adjust this based on your background image */

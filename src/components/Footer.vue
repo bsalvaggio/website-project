@@ -1,6 +1,6 @@
 <template>
     <footer class="footer">
-      <p>© 2023 salvagg.io </p>
+      <p> anno domini 2023 * salvagg.io </p>
     </footer>
   </template>
   
@@ -8,7 +8,7 @@
   .footer {
     padding: 1rem;
     text-align: center;
-    background-color: #333;
+    background-color: #040404;
     color: white;
   }
   </style>

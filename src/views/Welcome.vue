@@ -1,27 +1,28 @@
 <template>
     <div class="welcome-container">
-        <h1>Bill Salvaggio</h1>
-        <p>Cloud Engineer | Tech Writer & Enthusiast | Physiologist </p>
-        <div class="welcome-links">
-            <a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener">LinkedIn</a>
-            <a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener">Medium</a>
-            <a href="https://github.com/bsalvaggio" target="_blank" rel="noopener">GitHub</a>
-        </div>
-        
-        <p> </p>
-        <p>Welcome!</p>
-        <p>On this page you can find some info about me as well as my articles, projects and other topics of interest.</p>
-        <div class="articles-section">
-            <h2>Published Articles</h2>
-            <ul class="articles-list">
-                <li v-for="article in articles" :key="article.id">
-                    <a :href="article.link" target="_blank" rel="noopener noreferrer">
-                        {{ article.title }}
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <h1>Bill Salvaggio</h1>
+    <p> AWS Cloud Engineer | Tech Writer & Enthusiast | Physiologist </p>
+    <div class="welcome-links">
+        <font-awesome-icon :icon="['fab', 'linkedin']" /><a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener">LinkedIn</a>
+        <font-awesome-icon :icon="['fab', 'medium']" /><a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener">Medium</a>
+        <font-awesome-icon :icon="['fab', 'github']" /><a href="https://github.com/bsalvaggio" target="_blank" rel="noopener">GitHub</a>
     </div>
+    
+    <p> </p>
+    <p>Welcome!</p>
+    <p>On this page you can find some info about me as well as my articles, projects, and other topics of interest.</p>
+    <div class="articles-section">
+        <h2>Published Articles</h2>
+        <ul class="articles-list">
+            <li v-for="article in articles" :key="article.id">
+                <a :href="article.link" target="_blank" rel="noopener noreferrer">
+                    {{ article.title }}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
 </template>
 
 <script>
@@ -33,7 +34,7 @@ export default {
                 {
                     id: 1,
                     title: 'Terraforming AWS: The Art of Infrastructure Automation, Scaling, & Management',
-                    image: 'path_to_image1.jpg',
+                    image: '/Users/billsalvaggio/Developer/Code/Github/Vue/website/website-project/dist/assets/terraformingaws.jpg',
                     link: 'https://towardsdev.com/terraforming-aws-a-comprehensive-guide-to-the-art-of-infrastructure-automation-scaling-74a94f4039bd'
                 },
                 {

@@ -49,10 +49,8 @@
         <h2>Professional Development & Featured DevOps Projects</h2>
         <strong>LEVEL UP IN TECH | DevOps Cloud Engineer Graduate * 11/2022 to 05/2023</strong>
         <p>24-week cloud engineering program, during which I was trained in DevOps, Cloud Infrastructure, and Cloud Development. I built real-world projects, gaining hands-on experience utilizing many technologies and tools and developed a practical understanding of how these technologies are applied in real-world scenarios. </p>
-        
         <!-- List of projects -->
         <div class="articles-section">
-            
           <div v-for="topic in topics" :key="topic.name" class="topic-section">
             <h3>{{ topic.name }}</h3>
             <ul>
@@ -86,7 +84,7 @@
   
   <script>
 
-  import { topics } from '../components/ArticlesData.js';
+  import { topics } from '../components/ArticlesData.ts';
   
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   import { library } from '@fortawesome/fontawesome-svg-core';

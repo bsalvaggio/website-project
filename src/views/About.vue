@@ -4,9 +4,8 @@
         <p>I AM Bill</p>
         <p>I AM an AWS and Terraform certified cloud engineer; I studied: AWS, Linux, Python, Docker, IaC, Containerization, Terraform, CI/CD</p>
         <p>I AM a husband & father of three boys</p>
-        <p>I AM a physiologist, martial artist, bitcoin & all things tech enthusiast</p>
+        <p>I AM a martial artist and physiologist</p>
         <p>I AM aiming for continuous imporovement for myself and this website</p>
-        <p>I love paradigm shifts.</p>
     </div>
   </template>
   

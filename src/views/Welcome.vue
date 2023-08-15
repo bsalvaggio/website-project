@@ -1,7 +1,7 @@
 <template>
     <div class="welcome-container">
     <h1>Bill Salvaggio</h1>
-    <p> AWS Cloud Engineer | Tech Writer & Enthusiast | Physiologist </p>
+    <p> AWS Cloud Engineer | <font-awesome-icon :icon="['fab', 'linux']" />  </p>
     <div class="welcome-links">
         <font-awesome-icon :icon="['fab', 'linkedin']" /><a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener">LinkedIn</a>
         <font-awesome-icon :icon="['fab', 'medium']" /><a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener">Medium</a>
@@ -21,6 +21,9 @@
             </li>
         </ul>
     </div>
+
+    <p>Visitor Count: {{ visitorCo unt }}</p> <!-- This line displays the visitor count at the bottom -->
+
 </div>
 
 </template>
@@ -121,10 +124,32 @@ export default {
                     date: 'Nov 20, 2022',
                     image: 'path_to_image3.jpg',
                     link: 'https://medium.com/@bill.salvaggio/installing-nginx-on-centos-8-4d5ff1b828cd'
-                },
-                // ... continue this pattern, updating IDs, titles, descriptions, etc.
-            ]
+                    ],
+            visitorCount: 0  // Initialize the visitor count
         };
+    },
+    methods: {
+        fetchVisitorCount() {
+            const apiUrl = 'https://1wincht4l5.execute-api.us-east-1.amazonaws.com/prod';
+            fetch(apiUrl, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.visitorCount = parseInt(data.body, 10);  // Parse the number from the string
+            })
+            .catch(error => {
+                console.error('Error fetching the visitor count:', error);
+            });
+        }
+    },
+    mounted() {
+        this.fetchVisitorCount();  // Fetch the visitor count when the component is mounted
     }
 }
 </script>

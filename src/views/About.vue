@@ -1,11 +1,10 @@
 <template>
     <div>
         <h1>About Me</h1>
-        <p>I AM Bill</p>
-        <p>I AM an AWS and Terraform certified cloud engineer; I studied: AWS, Linux, Python, Docker, IaC, Containerization, Terraform, CI/CD</p>
-        <p>I AM a husband & father of three boys</p>
-        <p>I AM a martial artist and physiologist</p>
-        <p>I AM aiming for continuous imporovement for myself and this website</p>
+        <p>I am an AWS and Terraform certified cloud engineer; I studied: AWS, Linux, Python, Docker, IaC, Containerization, Terraform, CI/CD</p>
+        <p>I am a husband & father of three boys</p>
+        <p>I am a martial artist and physiologist</p>
+        <p>CI/CD</p>
     </div>
   </template>
   

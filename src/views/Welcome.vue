@@ -131,7 +131,7 @@ export default {
     },
     methods: {
         fetchVisitorCount() {
-            const apiUrl = 'https://1wincht4l5.execute-api.us-east-1.amazonaws.com/prod';
+            const apiUrl = 'https://1wincht4l5.execute-api.us-east-1.amazonaws.com/prod/counter';
             fetch(apiUrl, {
                 method: 'POST'
             })

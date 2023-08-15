@@ -125,7 +125,7 @@ export default {
                     image: 'path_to_image3.jpg',
                     link: 'https://medium.com/@bill.salvaggio/installing-nginx-on-centos-8-4d5ff1b828cd'
                 },
-
+            ],
             visitorCount: 0  // Initialize the visitor count
         };
     },

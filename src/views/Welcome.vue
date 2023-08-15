@@ -142,7 +142,7 @@ export default {
                 return response.json();
             })
             .then(data => {
-                this.visitorCount = parseInt(data.body, 10);  // Parse the number from the string
+                this.visitorCount = parseInt(data, 10);  // Parse the number from the string
             })
             .catch(error => {
                 console.error('Error fetching the visitor count:', error);

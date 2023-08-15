@@ -22,7 +22,7 @@
         </ul>
     </div>
 
-    <p>Visitor Count: {{ visitorCo unt }}</p> <!-- This line displays the visitor count at the bottom -->
+    <p>Visitor Count: {{ visitorCount }}</p> <!-- This line displays the visitor count at the bottom -->
 
 </div>
 

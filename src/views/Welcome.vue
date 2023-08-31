@@ -1,7 +1,7 @@
 <template>
     <div class="welcome-container">
     <h1>Bill Salvaggio</h1>
-    <p> AWS Cloud Engineer | <font-awesome-icon :icon="['fab', 'linux']" />  </p>
+    <p> Cloud Engineer | <font-awesome-icon :icon="['fab', 'linux']" />  </p>
     <div class="welcome-links">
         <font-awesome-icon :icon="['fab', 'linkedin']" /><a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener">LinkedIn</a>
         <font-awesome-icon :icon="['fab', 'medium']" /><a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener">Medium</a>
@@ -10,7 +10,7 @@
     
     <p> </p>
     <p>Welcome!</p>
-    <p>On this page you can find some info about me as well as my articles, projects, and other topics of interest.</p>
+    <p>On this page you can find my cloud portfolio - articles, projects, and other topics of interest.</p>
     <div class="articles-section">
         <h2>Published Articles</h2>
         <ul class="articles-list">

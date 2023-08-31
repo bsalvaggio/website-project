@@ -16,7 +16,7 @@
       <!-- Summary -->
       <section class="resume-summary">
         <h2>Profile</h2>
-        <p>AWS Certified cloud engineer with experience in automating and streamlining software development and infrastructure management through CI/CD and various DevOps practices and philosophies. Over 15 cloud projects delivered with expertise in AWS, Terraform, Docker, Kubernetes and more. Trained as an exercise physiologist with a years of experience in project management and national account representation.</p>
+        <p>AWS Certified cloud engineer with experience in automating and streamlining software development and infrastructure management through CI/CD and various DevOps practices and philosophies. Over 15 cloud projects delivered with expertise in AWS, Terraform, Docker, Kubernetes and more. Trained as an exercise physiologist with years of experience in project management and national account representation.</p>
       </section>
   
       <!-- Certifications -->

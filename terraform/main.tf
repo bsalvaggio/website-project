@@ -300,3 +300,166 @@ resource "aws_cloudfront_distribution" "redirect_distribution" {
     }
   }
 }
+
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "ResumeVisitCounterLambdaRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        },
+        Effect = "Allow",
+        Sid    = ""
+      }
+    ]
+  })
+}
+
+resource "aws_lambda_function" "resume_visit_counter" {
+  function_name = "ResumeVisitCounterFunction"
+  handler       = "lambda_function.lambda_handler"
+  role          = aws_iam_role.lambda_execution_role.arn
+  runtime       = "python3.8"
+  filename      = "../lambda_function_payload.zip"
+  source_code_hash = filebase64sha256("../lambda_function_payload.zip")
+  environment {
+    variables = {
+      DYNAMODB_TABLE = aws_dynamodb_table.resume_counter.name
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_full_access" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_dynamodb_table" "resume_counter" {
+  name         = "ResumeVisitCounter"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "PageName"
+  attribute {
+    name = "PageName"
+    type = "S"
+  }
+}
+
+resource "aws_api_gateway_rest_api" "resume_counter_api" {
+  name        = "ResumeCounterAPI"
+  description = "API for resume visit counter"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_resource" "resume_counter_resource" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  parent_id   = aws_api_gateway_rest_api.resume_counter_api.root_resource_id
+  path_part   = "counter"
+}
+
+resource "aws_api_gateway_method" "resume_counter_method" {
+  rest_api_id   = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id   = aws_api_gateway_resource.resume_counter_resource.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method_response" "resume_counter_post_200_response" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id = aws_api_gateway_resource.resume_counter_resource.id
+  http_method = aws_api_gateway_method.resume_counter_method.http_method
+  status      = "200"
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration" "resume_lambda_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id             = aws_api_gateway_resource.resume_counter_resource.id
+  http_method             = aws_api_gateway_method.resume_counter_method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.resume_visit_counter.invoke_arn
+}
+
+resource "aws_api_gateway_integration_response" "resume_lambda_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id = aws_api_gateway_resource.resume_counter_resource.id
+  http_method = aws_api_gateway_method.resume_counter_method.http_method
+  status      = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'",
+    "method.response.header.Access-Control-Allow-Credentials" = "'false'"
+  }
+}
+
+resource "aws_lambda_permission" "apigw_lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.resume_visit_counter.arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_deployment.resume_api_deployment.execution_arn}/*/POST/counter"
+}
+
+resource "aws_api_gateway_deployment" "resume_api_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  stage_name  = "prod"
+  triggers = {
+    redeployment = sha256(jsonencode(aws_api_gateway_rest_api.resume_counter_api.body))
+  }
+  depends_on = [aws_api_gateway_method.resume_counter_method]
+}
+
+resource "aws_api_gateway_method" "resume_counter_options_method" {
+  rest_api_id   = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id   = aws_api_gateway_resource.resume_counter_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method_response" "resume_counter_200_response" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id = aws_api_gateway_resource.resume_counter_resource.id
+  http_method = aws_api_gateway_method.resume_counter_options_method.http_method
+  status      = "200"
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration" "resume_counter_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id = aws_api_gateway_resource.resume_counter_resource.id
+  http_method = aws_api_gateway_method.resume_counter_options_method.http_method
+  type                    = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "resume_counter_options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.resume_counter_api.id
+  resource_id = aws_api_gateway_resource.resume_counter_resource.id
+  http_method = aws_api_gateway_method.resume_counter_options_method.http_method
+  status      = aws_api_gateway_method_response.resume_counter_200_response.status
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'",
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'",
+    "method.response.header.Access-Control-Allow-Credentials" = "'false'"
+  }
+}

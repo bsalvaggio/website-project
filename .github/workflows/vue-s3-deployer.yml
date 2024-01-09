@@ -22,15 +22,13 @@ jobs:
       - name: List components directory
         run: ls -l src/components/
 
-        
-      # Install dependencies and build your project
-      # - name: Build Project
-      #   run: |
-      #     npm install
-      #     npm run build
+      # Install dependencies and build 
+      - name: Build Project
+        run: |
+          npm install
+          npm run build
 
-      # # Add any additional steps required for your deployment here
-      # # For example, setting up AWS credentials
+      # # Additional steps required for deployment here
 
       # # Deploy to S3
       # - name: Deploy to S3

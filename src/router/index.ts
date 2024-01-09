@@ -12,33 +12,33 @@ const routes = [
   {
     path: '/',
     name: 'Welcome',
-    component: Welcome
+    component: Resume
   },
   {
     path: '/about',
     name: 'About',
     component: About
   },
-  {
-    path: '/articles',
-    name: 'Articles',
-    component: Articles
-  },
+  // {
+  //   path: '/articles',
+  //   name: 'Articles',
+  //   component: Articles
+  // },
   {
     path: '/contact',
     name: 'Contact',
     component: Contact
   },
-  {
-    path: '/projects',
-    name: 'Projects',
-    component: Projects
-  },
-  {
-    path: '/resume',
-    name: 'Resume',
-    component: Resume
-  }
+  // {
+  //   path: '/projects',
+  //   name: 'Projects',
+  //   component: Projects
+  // },
+  // {
+  //   path: '/resume',
+  //   name: 'Resume',
+  //   component: Resume
+  // }
 ]
 
 const router = createRouter({

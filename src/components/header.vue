@@ -9,9 +9,8 @@
         <!-- Individual navigation links using vue-router for in-app navigation -->
         <router-link to="/" class="nav-link">Home</router-link>
         <router-link to="/resume" class="nav-link">Resume</router-link>
-        <router-link to="/projects" class="nav-link">Projects</router-link>
-        <router-link to="/articles" class="nav-link">Articles</router-link>
-        <router-link to="/about" class="nav-link">About</router-link>
+        <!-- <router-link to="/articles" class="nav-link">Articles</router-link> -->
+        <router-link to="/about" class="nav-link">About</router-link> 
         <router-link to="/contact" class="nav-link">Contact</router-link>
       </nav>
     </header>

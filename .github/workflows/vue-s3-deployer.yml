@@ -40,4 +40,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
         run: |
-          aws s3 sync dist/ s3://www.salvagg.io/
+          aws s3 sync dist/ s3://www.salvagg.io/ --delete

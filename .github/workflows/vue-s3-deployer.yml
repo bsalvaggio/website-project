@@ -10,17 +10,17 @@ jobs:
      - uses: actions/vue-s3-deployer
      - id: Build-Vue
 
-      uses: bsalvaggio/website-project@main
-      with:
+     - uses: bsalvaggio/website-project@main
+       with:
         username: 'bsalvaggio'
         reponame: 'website-project'
         token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
 
         run: npm run build
         run: aws s3 sync dist/ s3://www.salvagg.io/
-        
-        uses: bsalvaggio/website-project@main
-        with:
+
+     - uses: bsalvaggio/website-project@main
+       with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}

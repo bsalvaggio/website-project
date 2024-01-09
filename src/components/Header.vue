@@ -4,23 +4,31 @@
       <!-- Logo: Displayed on the left side of the header -->
       <img src="@/assets/face.jpg" alt="Logo" class="logo" />
       
+      <ContactLinks/>
+
       <!-- Navigation container to wrap all the navigation links -->
       <nav class="nav-container">
         <!-- Individual navigation links using vue-router for in-app navigation -->
+        <!-- <router-link to="/resume" class="nav-link">Resume</router-link> -->
         <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/resume" class="nav-link">Resume</router-link>
         <!-- <router-link to="/articles" class="nav-link">Articles</router-link> -->
-        <router-link to="/about" class="nav-link">About</router-link> 
-        <router-link to="/contact" class="nav-link">Contact</router-link>
+        <router-link to="/about" class="nav-link">About this page</router-link> 
+        <!-- <router-link to="/contact" class="nav-link">Contact</router-link> -->
       </nav>
     </header>
   </template>
   
   <script>
+  import ContactLinks from '@/components/ContactLinks.vue'
+
   export default {
+    components: {
+      ContactLinks,
+    },
     name: 'Header'  // Component name for referencing
   }
   </script>
+  
   
   <style scoped>
     /* Styles for the main header */

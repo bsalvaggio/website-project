@@ -2,7 +2,7 @@
     <div>
         <h2>About This AWS Cloud Resume Website Project</h2>
         <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-c5c0c6fe9593" target="_blank" rel="noopener"> The AWS Cloud Resume Challenge: Part I</a> 
-        <p> testing out the new Github actions workflow with this one line </p>
+        <p> testing out the new Github actions workflow with this 1 line </p>
         <p>  </p>
     </div>
   </template>

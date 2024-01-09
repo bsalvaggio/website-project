@@ -19,6 +19,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: List components directory
+        run: ls -l src/components/
+
+        
       # Install dependencies and build your project
       - name: Build Project
         run: |

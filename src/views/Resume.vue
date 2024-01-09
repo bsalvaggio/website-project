@@ -3,15 +3,11 @@
   
       <!-- Header -->
     <header class="resume-header">
-        <h1>Bill Salvaggio | DevOps Engineer</h1>
-        <p> billy.salvaggio@gmail.com *  
-            <font-awesome-icon :icon="['fab', 'linkedin']" />
-            <a href="https://linkedin.com/in/billsalvaggio" target="_blank" rel="noopener"> LinkedIn</a> * 
-            <font-awesome-icon :icon="['fab', 'medium']" />
-            <a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener"> Medium</a>
+        <h1>Bill Salvaggio | Cloud Engineer</h1>
+        <p>
+          <!-- <ContactLinks/> -->
         </p>
     </header>
-
   
       <!-- Summary -->
       <section class="resume-summary">
@@ -85,7 +81,7 @@
   <script>
 
   import { topics } from '../components/ArticlesData.ts';
-  
+  import ContactLinks from '@/components/ContactLinks.vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   import { library } from '@fortawesome/fontawesome-svg-core';
   import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -95,6 +91,7 @@
   export default {
     name: 'Resume',
     components: {
+      ContactLinks,
       FontAwesomeIcon
     },
     data() {

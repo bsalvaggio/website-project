@@ -1,6 +1,7 @@
 <template>
     <div class="contact-section">
       <h2>Contact Me</h2>
+      <ContactLinks/>
       <p>If you have any questions or want to connect, you can reach me at:</p>
       <ul class="contact-list">
         <li>
@@ -28,12 +29,19 @@
 </template>
 
 <script>
+import ContactLinks from '@/components/ContactLinks.vue'
+
 export default {
+
   name: 'Contact',
   computed: {
     emailAddress() {
       return 'billy.salvaggio' + '@' + 'gmail.com';
     }
+  },
+
+  components: {
+    ContactLinks
   }
 }
 </script>

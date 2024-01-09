@@ -1,5 +1,8 @@
 name: Deploy to AWS S3
-on: [ push ]
+on: 
+  push:
+    branches:
+    - main
 
 jobs:
   build_vue:

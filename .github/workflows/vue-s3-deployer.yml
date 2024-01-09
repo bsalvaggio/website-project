@@ -30,7 +30,7 @@ jobs:
 
       # Additional steps required for deployment here
 
-      # Deploy to S3
+      # Deploy to S3 Bucket
       - name: Deploy to S3
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}

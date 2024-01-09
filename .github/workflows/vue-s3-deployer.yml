@@ -24,18 +24,18 @@ jobs:
 
         
       # Install dependencies and build your project
-      - name: Build Project
-        run: |
-          npm install
-          npm run build
+      # - name: Build Project
+      #   run: |
+      #     npm install
+      #     npm run build
 
-      # Add any additional steps required for your deployment here
-      # For example, setting up AWS credentials
+      # # Add any additional steps required for your deployment here
+      # # For example, setting up AWS credentials
 
-      # Deploy to S3
-      - name: Deploy to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws s3 sync dist/ s3://www.salvagg.io/
+      # # Deploy to S3
+      # - name: Deploy to S3
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   run: |
+      #     aws s3 sync dist/ s3://www.salvagg.io/

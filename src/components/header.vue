@@ -1,7 +1,7 @@
 <template>
     <!-- Main header component wrapping everything -->
     <header class="header">
-      <!-- Logo: Displayed on the left side of the header -->
+      <!-- Logo: Displayed on left side of the header -->
       <img src="@/assets/face.jpg" alt="Logo" class="logo" />
       
       <ContactLinks/>

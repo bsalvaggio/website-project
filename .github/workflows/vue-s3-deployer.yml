@@ -41,3 +41,4 @@ jobs:
           AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
         run: |
           aws s3 sync dist/ s3://www.salvagg.io/ --exact-timestamps
+          aws cloudfront create-invalidation --distribution-id EFJX169TXJMO5 --paths "/*"

@@ -7,7 +7,7 @@
            class="about-link"> The AWS Cloud Resume Challenge: Part I (Medium article)</a>
 
         <article>
-            <h2>THE CHALLENGE, Part I </h2>
+            <h2>THE CHALLENGE: Part I </h2>
             <p>This challenge was completed primarily in AWS, using a combination of VSCode and vue to build my cloud resume website.</p>
 
             <h3>1. CERTIFICATION</h3>

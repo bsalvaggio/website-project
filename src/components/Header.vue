@@ -61,7 +61,7 @@
       margin-left: 1rem;        /* Left margin for spacing between links */
       text-decoration: none;    /* Remove default link underline */
       font-size: 1.2rem;        /* Set font size */
-      padding: 0.2rem 0.5rem;   /* Padding for touch targets and spacing */
+      padding: 0.2rem 0.7rem;   /* Padding for touch targets and spacing */
       transition: color 0.3s;   /* Smooth transition for hover effects */
     }
   

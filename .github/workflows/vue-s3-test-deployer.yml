@@ -1,7 +1,7 @@
-on: 
+on:
   push:
     branches:
-    - main
+      Develop
 
 jobs:
   build_vue:
@@ -31,12 +31,12 @@ jobs:
 
       # Additional steps required for deployment here
 
-      # Deploy to S3 Bucket
-      - name: Deploy to S3
+      # Deploy to S3 Test Bucket
+      - name: Deploy to AWS S3 Test
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
         run: |
-          aws s3 sync dist/ s3://www.salvagg.io/ --exact-timestamps
-          aws cloudfront create-invalidation --distribution-id EFJX169TXJMO5 --paths "/*"
+          aws s3 sync dist/ s3://test.salvagg.io/ --exact-timestamps
+          aws cloudfront create-invalidation --distribution-id ENJW7KY6CVNEF --paths "/*"

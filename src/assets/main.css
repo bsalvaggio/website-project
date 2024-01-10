@@ -1,15 +1,24 @@
 /* Importing the Source Code Pro font */
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;700&display=swap'); */
+
+/* Importing the Ubuntu font */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
 
 /* Importing base styles */
 @import './base.css';
 
 /* Setting default styles for the body element */
-body {
+/* body {
   background-color: #212529; /* Dark background color */
-  color: #f6f8fa; /* Light foreground color for text */
-  font-family: 'Source Code Pro', monospace; /* Default font */
+  /* color: #f6f8fa; Light foreground color for text */
+  /* font-family: 'Source Code Pro', monospace; Default font */
+/* } */
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+  /* Other styles... */
 }
+
 
 /* Main application container styles */
 #app {

@@ -1,6 +1,5 @@
 <template>
     <div class="resume-container">
-  
       <!-- Header -->
     <header class="resume-header">
         <h1>Bill Salvaggio | Cloud Engineer</h1>
@@ -8,7 +7,7 @@
           <!-- <ContactLinks/> -->
         </p>
     </header>
-  
+
       <!-- Summary -->
       <section class="resume-summary">
         <h2>Profile</h2>
@@ -106,7 +105,7 @@
   
   <style scoped>
   .resume-container {
-    font-family: 'Source Code Pro', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     margin: 20px auto;
     max-width: 1000px;
     color: #EAEAEA;
@@ -115,39 +114,44 @@
     border-radius: 5px;
   }
   
-  .resume-header, .resume-summary, .resume-certifications, .resume-education, .resume-projects, .resume-experience {
-    margin-bottom: 40px;
-  }
-  
-  h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  
-  h2 {
-    font-size: 1.6em;
-    margin-top: 30px;
-    margin-bottom: 20px;
-  }
-  
-  a {
-    color: #78C0E0;
-    text-decoration: none;
-    transition: 0.3s;
-  }
-  
-  a:hover {
-    color: #ABDFFA;
-  }
-  
-  ul {
-    padding-left: 20px;
-  }
-  
-  .experience-item:not(:last-of-type) {
-    margin-bottom: 20px;
-  }
-  
-  /* Additional stylings and adjustments can be added based on requirements */
-  </style>
-  
+/* Spacing for sections */
+.resume-header, .resume-summary, .resume-certifications, .resume-education, .resume-projects, .resume-experience {
+  margin-bottom: 1rem; /* Adjust as needed */
+}
+
+/* Header styles */
+h1 {
+  font-size: 2em;
+  margin-bottom: 0.5rem; /* Closer to the text below */
+}
+
+h2 {
+  font-size: 1.6em;
+  margin-top: 1rem; /* Space above the header */
+  margin-bottom: 0.5rem; /* Space below the header */
+}
+
+/* Link styles */
+a {
+  color: #78C0E0;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: #ABDFFA;
+}
+
+/* List styles */
+ul {
+  padding-left: 20px;
+  margin-bottom: 1rem; /* Space below the list */
+}
+
+/* Experience item spacing */
+.experience-item:not(:last-of-type) {
+  margin-bottom: 1rem; /* Consistent spacing between items */
+}
+
+/* Additional stylings and adjustments can be added based on requirements */
+</style>

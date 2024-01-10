@@ -165,7 +165,7 @@ export default {
 
 <style scoped>
     .welcome-container {
-        font-family: 'Source Code Pro', monospace;
+        font-family: 'Ubuntu', sans-serif; /* Apply Ubuntu font */
         text-align: center;
         margin: 100px auto;
         padding: 10px;
@@ -204,7 +204,7 @@ export default {
         padding: 0;
     }
 
-    .articles-list li {
+t    .articles-list li {
         margin: 10px 0;
     }
 

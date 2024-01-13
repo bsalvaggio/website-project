@@ -1,5 +1,5 @@
 # This workflow is triggered on push events to either 'main' or 'Develop' branches
-on: 
+on:
     push:
       branches:
       - main

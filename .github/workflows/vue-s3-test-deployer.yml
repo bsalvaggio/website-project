@@ -1,38 +1,38 @@
-on:
+# This workflow is triggered on push events to the 'main' branch.
+on: 
   push:
     branches:
-      Develop
-
+    - Develop
+# Define the jobs in this workflow.
 jobs:
   build_vue:
     name: deploy
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout your repository
+      # Step 1: Check out the repository
       - uses: actions/checkout@v2
 
+      # Step 2: Set up Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
+      # Step 3: Install project dependencies
       - name: Install dependencies
         run: npm install
 
+      # Optional step: List the contents of the components directory for debugging
       - name: List components directory
         run: ls -l src/components/
 
-      # Install dependencies and build 
+      # Step 4: Build the project
       - name: Build Project
-        run: |
-          npm install
-          npm run build
+        run: npm run build
 
-      # Additional steps required for deployment here
-
-      # Deploy to S3 Test Bucket
-      - name: Deploy to AWS S3 Test
+      # Step 5: Deploy the built project to AWS S3 Bucket
+      - name: Deploy to S3 Test
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}

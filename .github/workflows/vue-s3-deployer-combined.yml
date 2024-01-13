@@ -1,11 +1,11 @@
-# This workflow is triggered on push events to either 'main' or 'Develop' branches
+# This workflow is triggered on push events to either 'main' or 'Develop' branches.
 on:
     push:
       branches:
       - main
       - Develop
-  
-  jobs:
+# Define the jobs in this workflow.
+jobs:
     build_vue:
       name: deploy
       runs-on: ubuntu-latest

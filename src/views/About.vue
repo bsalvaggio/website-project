@@ -185,5 +185,10 @@ h2 {
     text-decoration: underline; /* Adds underline on hover */
 }
 
+img {
+    max-width: 50%;  /* Sets the maximum width to 50% of its container */
+    height: auto;    /* Maintains the aspect ratio of the image */
+}
+
   </style>
   

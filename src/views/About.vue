@@ -82,7 +82,7 @@
 
             <h3>Creating the workflow</h3>
             <p>Each workflow will be created as a .yml file, located in the .github/workflows directory in our repo. We will define the triggers, jobs, and steps. Our workflow is triggered by a push to my 'main' branch. Any changes merged into 'main' will automatically initiate the deployment process.</p>
-            <img src="src/assets/articleimages/main.png" alt="'main' workflow" />
+            <img src="@/assets/articleimages/main.png" alt="'main' workflow" />
             <p>The first step, checking out the code, means that the code will be cloned from our Github repo to the virtual environment (runner) provided by Github Actions, where the workflow will be executed. This is a pre-built Github action provided by Github and will allow for other steps (such as npm run build) within this workflow to operate off of our code.</p>
 
             <p>The next steps will install dependencies and build the application: First it sets up a Node.js environment for the workflow and specifies the version. It then enables caching of the npm dependencies. If our package.json hasn't changed, Actions can reference the cached files instead of downloading them again. This can greatly speed up the build process and save bandwidth and resources.</p>
@@ -93,10 +93,10 @@
             <p>Once we confirmed that our Github Actions workflow ran successfully, I created a test environment in a new S3 bucket, at test.salvagg.io. The test environment will serve to test any new code changes before pushing to our production. We will use this environment to test any updates to the website code before deploying on the production branch.</p>
 
             <p>We will then create a new workflow, which will operate just like the first one, but will deploy changes to our test environment instead. This will be triggered upon a push to our "Develop" branch. </p>
-            <img src="src/assets/articleimages/test.png" alt="'develop' workflow" />
+            <img src="@/assets/articleimages/test.png" alt="'develop' workflow" />
 
             <p>Once both workflows are confirmed working, we can optimize this automation by combining both workflows into a single Github Actions workflow in order to reduce redundancy and improve our workflow efficiency. We now have conditional deployment steps which will enable specific actions based on the branch. This will lead to deployment to our production environment when a push is made to 'main' and to the test environment when pushed to 'Develop'.</p>
-            <img src="src/assets/articleimages/combined.png" alt="'combined' workflow" />
+            <img src="@/assets/articleimages/combined.png" alt="'combined' workflow" />
 
             <h3>Confirming Successful Workflows</h3>
             <p>We can check our Github under the Actions tab in our repository to confirm that the workflow is successful: and a more detailed step by step check of the workflow if we click on the specific workflow run. This is very helpful while building the workflow, in order to see exactly where a problem arise if it was unsuccessful.</p>

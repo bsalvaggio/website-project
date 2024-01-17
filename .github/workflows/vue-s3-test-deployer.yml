@@ -1,4 +1,8 @@
 # This workflow is triggered on push events to the 'Develop' branch.
+name: Deploy to S3 Develop Branch
+
+run-name: ${{ github.actor }} is pushing to Develop Branch
+
 on: 
   push:
     branches:

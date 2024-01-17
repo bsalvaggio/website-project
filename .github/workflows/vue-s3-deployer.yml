@@ -1,4 +1,8 @@
 # This workflow is triggered on push events to the 'main' branch.
+name: Deploy to S3 Main Branch
+
+run-name: ${{ github.actor }} is pushing to Main Branch
+
 on: 
   push:
     branches:

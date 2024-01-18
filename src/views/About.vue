@@ -70,7 +70,6 @@
             <p>I used Infrastructure as code to redefine my entire website in Terraform. This was a significant bit of work but I used the knowledge I gained from my Terraform Associate Certification preparation as well as previous Terraform projects.</p>
             <p>I converted my S3, Route53, and Cloudfront resources to Infrastructure as Code using Terraform. This was a challenging undertaking and a bit nerve wracking but once successful and I was able to fully break down and rebuild the infrastructure through Terraform it proved to be a very worthwhile endeavor.</p>
         </article>
-
         <article>
             <h2>The AWS Cloud Resume Challenge Project, Part II</h2>
             <p>In this continuation of our AWS Cloud Resume Challenge, we will explore automation through Github Actions. <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-c5c0c6fe9593" target="_blank">Click here to revisit part 1</a> for an overview of the project. We will look at automating the deployment of our website and explore some fundamentals of CI/CD (Continuous Integration and Continuous Delivery). This will help facilitate any changes we want to make to the website and allow us to do so more frequently, reliably, and efficiently. By automating this process, it should reduce further the chances of any manual errors and allow us to make and deploy smaller changes much more rapidly.</p>
@@ -91,7 +90,7 @@
 
             <h3>Creating a Test Environment</h3>
             <p>Once we confirmed that our Github Actions workflow ran successfully, I created a test environment in a new S3 bucket, at test.salvagg.io. The test environment will serve to test any new code changes before pushing to our production. We will use this environment to test any updates to the website code before deploying on the production branch.</p>
-
+            <p>Normally, a test or stage environment would not be publicly accessible but as this is an educational project I will leave it public for the moment. As such, test.salvagg.io at any point may be under construction, and for the most stable website please visit my production environment at www.salvagg.io</p>
             <p>We will then create a new workflow, which will operate just like the first one, but will deploy changes to our test environment instead. This will be triggered upon a push to our "Develop" branch. </p>
             <img src="@/assets/articleimages/test.png" alt="'develop' workflow" />
 

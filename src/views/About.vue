@@ -5,6 +5,11 @@
            target="_blank" 
            rel="noopener"
            class="about-link"> The AWS Cloud Resume Challenge: Part I (Medium article)</a>
+        
+        <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-part-ii-5c36029dbc59" 
+           target="_blank" 
+           rel="noopener"
+           class="about-link"> The AWS Cloud Resume Challenge: Part II - CI/CD Automation with Github Actions & Test Environment (Medium article)</a>
 
         <article>
             <h2>THE CHALLENGE: Part I </h2>
@@ -65,6 +70,49 @@
             <p>I used Infrastructure as code to redefine my entire website in Terraform. This was a significant bit of work but I used the knowledge I gained from my Terraform Associate Certification preparation as well as previous Terraform projects.</p>
             <p>I converted my S3, Route53, and Cloudfront resources to Infrastructure as Code using Terraform. This was a challenging undertaking and a bit nerve wracking but once successful and I was able to fully break down and rebuild the infrastructure through Terraform it proved to be a very worthwhile endeavor.</p>
         </article>
+        <article>
+            <h2>The AWS Cloud Resume Challenge Project, Part II</h2>
+            <p>In this continuation of our AWS Cloud Resume Challenge, we will explore automation through Github Actions. <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-c5c0c6fe9593" target="_blank">Click here to revisit part 1</a> for an overview of the project. We will look at automating the deployment of our website and explore some fundamentals of CI/CD (Continuous Integration and Continuous Delivery). This will help facilitate any changes we want to make to the website and allow us to do so more frequently, reliably, and efficiently. By automating this process, it should reduce further the chances of any manual errors and allow us to make and deploy smaller changes much more rapidly.</p>
+
+            <p>Adding a test environment will allow us to test any changes before they reach production and add another layer of protection between our intended changes and the live product.</p>
+
+            <h3>What is Github Actions?</h3>
+            <p>GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production. We will create workflows which will automate the deployment of our website when any changes are made. A workflow can be set up to build, test, release, deploy, or package any code.</p>
+
+            <h3>Creating the workflow</h3>
+            <p>Each workflow will be created as a .yml file, located in the .github/workflows directory in our repo. We will define the triggers, jobs, and steps. Our workflow is triggered by a push to my 'main' branch. Any changes merged into 'main' will automatically initiate the deployment process.</p>
+            <img src="@/assets/articleimages/main.png" alt="'main' workflow" />
+            <p>The first step, checking out the code, means that the code will be cloned from our Github repo to the virtual environment (runner) provided by Github Actions, where the workflow will be executed. This is a pre-built Github action provided by Github and will allow for other steps (such as npm run build) within this workflow to operate off of our code.</p>
+
+            <p>The next steps will install dependencies and build the application: First it sets up a Node.js environment for the workflow and specifies the version. It then enables caching of the npm dependencies. If our package.json hasn't changed, Actions can reference the cached files instead of downloading them again. This can greatly speed up the build process and save bandwidth and resources.</p>
+
+            <p>In step 5, the workflow will then deploy the built project to our specified S3 bucket hosting the website and invalidate the Cloudfront cache, making sure that users are served with the latest version of the site. The CloudFront invalidation is important because it forces CloudFront to fetch a fresh copy from the S3 bucket. We use the '-exact timestamps' flag so that we guarantee the deployed files are from the most recent build. It will ensure that even a small change which does not change the file size is updated to our S3. Note: We will also use Github secrets to ensure that none of our AWS credentials are exposed.</p>
+
+            <h3>Creating a Test Environment</h3>
+            <p>Once we confirmed that our Github Actions workflow ran successfully, I created a test environment in a new S3 bucket, at test.salvagg.io. The test environment will serve to test any new code changes before pushing to our production. We will use this environment to test any updates to the website code before deploying on the production branch.</p>
+            <p>Normally, a test or stage environment would not be publicly accessible but as this is an educational project I will leave it public for the moment. As such, test.salvagg.io at any point may be under construction, and for the most stable website please visit my production environment at www.salvagg.io</p>
+            <p>We will then create a new workflow, which will operate just like the first one, but will deploy changes to our test environment instead. This will be triggered upon a push to our "Develop" branch. </p>
+            <img src="@/assets/articleimages/test.png" alt="'develop' workflow" />
+
+            <p>Once both workflows are confirmed working, we can optimize this automation by combining both workflows into a single Github Actions workflow in order to reduce redundancy and improve our workflow efficiency. We now have conditional deployment steps which will enable specific actions based on the branch. This will lead to deployment to our production environment when a push is made to 'main' and to the test environment when pushed to 'Develop'.</p>
+            <img src="@/assets/articleimages/combined.png" alt="'combined' workflow" />
+
+            <h3>Confirming Successful Workflows</h3>
+            <p>We can check our Github under the Actions tab in our repository to confirm that the workflow is successful: and a more detailed step by step check of the workflow if we click on the specific workflow run. This is very helpful while building the workflow, in order to see exactly where a problem arise if it was unsuccessful.</p>
+
+            <h3>Conclusions</h3>
+            <p>Enabling Github Actions has greatly improved my ability to deploy changes to my Cloud Resume website <a href="http://www.salvagg.io" target="_blank">www.salvagg.io</a>. Working with Github secrets was a valuable process in security and keeping important AWS information out of published code. Building out a simple Github Actions workflow has helped set me up to think about what else can be automated throughout the development process of this project, as well as other projects.</p>
+
+            <h3>Helpful Resources:</h3>
+            <ul>
+                <li><a href="https://docs.github.com/en/actions/quickstart" target="_blank">Github Actions Quickstart</a></li>
+                <li><a href="https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions" target="_blank">Workflow syntax for Github Actions</a></li>
+                <li><a href="https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows" target="_blank">Caching Dependencies to speed up workflows</a></li>
+                <li><a href="https://docs.github.com/en/actions/security-guides/encrypted-secrets" target="_blank">Using Secrets in Github Actions</a></li>
+            </ul>
+
+        </article>
+    
 
     </div>
   
@@ -77,6 +125,7 @@
   </script>
   
   <style scoped>
+    
   /* Add your specific styles for the About page here */
   
   article {
@@ -133,6 +182,11 @@ h2 {
 .about-link:hover {
     color: #ABDFFA; /* Changes color on hover */
     text-decoration: underline; /* Adds underline on hover */
+}
+
+img {
+    max-width: 50%;  /* Sets the maximum width to 50% of its container */
+    height: auto;    /* Maintains the aspect ratio of the image */
 }
 
   </style>

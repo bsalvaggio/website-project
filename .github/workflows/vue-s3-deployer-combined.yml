@@ -29,17 +29,14 @@ jobs:
         # Installs project dependencies using npm
         - name: Install dependencies
           run: npm install
-  
-        # Optional: Lists the contents of the components directory for debugging purposes
-        - name: List components directory
-          run: ls -l src/components/
-  
+
         # Builds the project by running the build script defined in package.json
         - name: Build Project
           run: npm run build
   
         # Deploys the build to the production S3 bucket if the push was to the 'main' branch
         - name: Deploy to S3
+        
         # Conditional step based on the branch
           if: github.ref == 'refs/heads/main'
           env:
@@ -52,6 +49,7 @@ jobs:
   
         # Deploys the build to the test S3 bucket if the push was to the 'Develop' branch
         - name: Deploy to AWS S3 Test
+
         # Conditional step based on the branch
           if: github.ref == 'refs/heads/Develop'  
           env:

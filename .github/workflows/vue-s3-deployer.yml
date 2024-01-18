@@ -27,10 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Optional step: List the contents of the components directory for debugging
-      - name: List components directory
-        run: ls -l src/components/
-
       # Step 4: Build the project
       - name: Build Project
         run: npm run build

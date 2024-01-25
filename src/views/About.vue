@@ -1,8 +1,8 @@
 <template>
     <div>  
       <h1>About This AWS Cloud Resume Website Project</h1>
-      <p> </p>
       <img class="top-image" src="@/assets/website_diagram.png" alt="architecture diagram" style="width: 100%; height: auto;" />        
+      <p> </p>
       <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-c5c0c6fe9593" 
            target="_blank" 
            rel="noopener"

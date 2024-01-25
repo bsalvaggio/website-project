@@ -6,7 +6,7 @@
            target="_blank" 
            rel="noopener"
            class="about-link"> The AWS Cloud Resume Challenge: Part I (Medium article)</a>
-        <p> </p>
+        <p> - </p>
         <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-part-ii-5c36029dbc59" 
            target="_blank" 
            rel="noopener"

@@ -190,5 +190,9 @@ img {
     height: auto;    /* Maintains the aspect ratio of the image */
 }
 
+div img {
+    max-width: 100% !important;  /* Set the maximum width to 100% of its container */
+}
+
   </style>
   

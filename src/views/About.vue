@@ -31,7 +31,7 @@
             <p>Going forward, I am currently preparing for the AWS Solutions Architect Associate Certification to further develop my knowledge and skills in working with AWS cloud infrastructure and to learn how these technologies integrate on a deeper level.</p>
 
             <h3>2. HTML</h3>
-            <p>Next, my resume was to be written in HTML. (Not a word doc, not a PDF). This was my first foray into HTML and after a bit of a learning curve.</p>
+            <p>Next, my resume was to be written in HTML. (Not a word doc, not a PDF). This was my first foray into HTML and after a bit of a learning curve I worked through the process of building out the simple HTML necessary for my purposes.</p>
 
             <h3>3. CSS</h3>
             <p>The next step was to style the resume with CSS. This was also my first experience in using CSS. I have a background in general design and aesthetics through my years working in the print industry producing and installing large format signage, and vinyl graphics. It was a valuable experience to learn CSS and styling my resume website was the perfect introduction to this.</p>

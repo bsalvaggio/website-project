@@ -25,24 +25,28 @@
               })
               .then(response => {
                   if (!response.ok) {
+                    // If the responsei is not ok, throw an error
                       return response.text().then(text => {
                           throw new Error(text || 'Network response was not ok');
                       });
                   }
-                  return response.json();
+                  return response.json(); // Parse the response as JSON
               })
               .then(data => {
-                  this.visitorCount = parseInt(data.count, 10); 
+                // Update the visitor count with the fetched data
+                  this.visitorCount = parseInt(data.count, 10); // Parse the count as an integer
               })
   
               .catch(error => {
+                // Catch and log any erros
                   console.error('Error fetching the visitor count:', error.message);
               });
           }
   
       },
       mounted() {
-          this.fetchVisitorCount();  // Fetch the visitor count when the component is mounted
+        // Fetch the visitor count when the component is mounted
+        this.fetchVisitorCount();
       }
   }
   </script>

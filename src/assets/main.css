@@ -84,3 +84,11 @@ h1, h2, h3, h4, h5, h6 {
 .welcome-links a:focus, .articles-list a:focus {
   outline: 2px solid #ABDFFA; /* Blue outline when focused */
 }
+
+.experience-item p {
+  margin-top: 10px; /* Adjust this value for more or less space */
+}
+
+.highlight-title {
+  color: #78C0E0; /* Light blue color */
+}

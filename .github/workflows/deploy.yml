@@ -1,0 +1,65 @@
+# Deploy salvagg.io to AWS S3 + CloudFront
+# No build step needed — static HTML/CSS/JS
+
+name: Deploy salvagg.io
+
+run-name: ${{ github.actor }} deploying to ${{ github.ref_name }}
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - 'lambda/**'
+      - 'terraform/**'
+      - 'README.md'
+
+jobs:
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Deploy to production (main branch)
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          aws s3 sync . s3://www.salvagg.io/ \
+            --exact-timestamps \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "lambda/*" \
+            --exclude "terraform/*" \
+            --exclude "README.md" \
+            --exclude ".gitignore"
+          aws cloudfront create-invalidation \
+            --distribution-id EFJX169TXJMO5 \
+            --paths "/*"
+
+      # Deploy to test (develop branch)
+      - name: Deploy to Test
+        if: github.ref == 'refs/heads/develop'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          aws s3 sync . s3://test.salvagg.io/ \
+            --exact-timestamps \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "lambda/*" \
+            --exclude "terraform/*" \
+            --exclude "README.md" \
+            --exclude ".gitignore"
+          aws cloudfront create-invalidation \
+            --distribution-id ENJW7KY6CVNEF \
+            --paths "/*"

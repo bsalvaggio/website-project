@@ -131,7 +131,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;heigh
   <div class="pn">
     <div class="pn-t">Settings<button class="pn-x" id="sX">✕</button></div>
     <div class="sr" style="cursor:pointer" id="oVP"><div><div class="sl">Voice</div><div class="sd" id="cvn">Alex's Voice</div></div><div class="sc" style="color:var(--gold);font-size:20px">›</div></div>
-    <div class="sr"><div><div class="sl">Speech Speed</div><div class="sd">Slower is clearer for speeches</div></div><div class="sc"><span id="rv">0.9</span><input type="range" id="rs" min="0.5" max="1.3" step="0.1" value="0.9"></div></div>
+    <div class="sr"><div><div class="sl">Speech Speed</div><div class="sd">Slower is clearer for speeches</div></div><div class="sc"><span id="rv">0.8</span><input type="range" id="rs" min="0.5" max="1.3" step="0.1" value="0.8"></div></div>
     <div class="sr"><div><div class="sl">Voice Engine</div><div class="sd" id="es">Checking...</div></div><div class="sc"><span id="ei" style="font-size:24px">⏳</span></div></div>
     <div class="sr" style="border:none;padding-top:16px"><div><div class="sl" style="color:var(--t3)">Big Al v2.1</div><div class="sd">Made with love for Alex 💛</div></div></div>
   </div>
@@ -158,8 +158,8 @@ const EL = {
   // Alex's cloned voice is FIRST and DEFAULT
   voices: [
     { id: 'f6SL2KwYsFp3vnBZicBb', name: "Alex's Voice", desc: "Cloned from Alex's own voice. This is him.", isAlex: true,
-      // Optimized settings for instant voice clone from noisy bar audio
-      settings: { stability: 0.45, similarity_boost: 0.65, style: 0.25, use_speaker_boost: true } },
+      // Calm preset for noisy-source clone to reduce intensity and urgency.
+      settings: { stability: 0.75, similarity_boost: 0.5, style: 0.0, use_speaker_boost: false } },
     { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', desc: 'Deep, warm, clear. Great for conversation and speeches.',
       settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
     { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', desc: 'Conversational, friendly, natural cadence.',
@@ -265,7 +265,7 @@ function play(u, urg) {
   if (curAudio) { curAudio.pause(); curAudio = null; }
   const a = new Audio(u);
   a.volume = urg ? 1 : parseFloat(ld('vol') || 1);
-  a.playbackRate = parseFloat(ld('rate') || 0.9);
+  a.playbackRate = parseFloat(ld('rate') || 0.8);
   curAudio = a;
   a.onplay = () => { S.speaking = true; $('sbar').classList.add('act'); };
   a.onended = a.onerror = () => { S.speaking = false; $('sbar').classList.remove('act'); curAudio = null; };
@@ -275,7 +275,7 @@ function play(u, urg) {
 function fallback(text, urg) {
   const sy = speechSynthesis; sy.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.rate = parseFloat(ld('rate') || 0.9); u.volume = urg ? 1 : parseFloat(ld('vol') || 1);
+  u.rate = parseFloat(ld('rate') || 0.8); u.volume = urg ? 1 : parseFloat(ld('vol') || 1);
   const v = sy.getVoices();
   const p = v.find(x => x.lang.startsWith('en') && x.name.toLowerCase().includes('daniel'))
     || v.find(x => x.lang.startsWith('en') && (x.name.includes('Enhanced') || x.name.includes('Premium')))
@@ -434,6 +434,7 @@ function mkVP() {
 async function init() {
   const rate = ld('rate'), voice = ld('voice');
   if (rate) { $('rs').value = rate; $('rv').textContent = rate; }
+  else { $('rs').value = '0.8'; $('rv').textContent = '0.8'; }
   // Default to Alex's cloned voice
   if (voice) { S.voice = voice; const v = EL.voices.find(x => x.id === voice); if (v) $('cvn').textContent = v.name; }
   else { S.voice = EL.voices[0].id; $('cvn').textContent = EL.voices[0].name; sv('voice', EL.voices[0].id); }

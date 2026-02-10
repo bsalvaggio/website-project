@@ -179,64 +179,60 @@ const cache = new Map();
 let curAudio = null;
 const S = { view: 'home', cat: null, txt: '', last: '', lastU: false, speaking: false, voice: null, elOk: false };
 
-// BOARD CONFIG — placeholders until mom's list arrives
+// BOARD CONFIG - tuned from Alex's real phrase list
 const CFG = { home: [
   { id: 'urgent', label: 'I Need Help', icon: '🚨', type: 'urgent', phrase: 'I need help right now', alert: true },
-  { id: 'needs', label: 'My Needs', icon: '🙋', type: 'category' },
-  { id: 'feelings', label: 'How I Feel', icon: '💭', type: 'category' },
-  { id: 'social', label: 'Social', icon: '💬', type: 'category' },
+  { id: 'pain', label: 'I Have Pain', icon: '😣', type: 'urgent', phrase: 'I have pain', alert: true },
   { id: 'yes', label: 'Yes', icon: '✅', type: 'confirm-yes', phrase: 'Yes' },
   { id: 'no', label: 'No', icon: '❌', type: 'phrase', phrase: 'No' },
-  { id: 'thanks', label: 'Thank You', icon: '🙏', phrase: 'Thank you' },
-  { id: 'repeat', label: 'Say Again?', icon: '🔄', phrase: 'Can you say that again please?' },
-  { id: 'compose', label: 'Type It Out', icon: '⌨️', type: 'action', action: 'compose' },
-  { id: 'wait', label: 'Hold On', icon: '✋', phrase: 'Hold on, give me a moment' },
-  { id: 'tv', label: 'TV / Music', icon: '📺', type: 'category' },
-  { id: 'mom', label: 'Call Mom', icon: '📞', phrase: 'Can someone call Mom for me?' }
+  { id: 'water', label: 'I Want Water', icon: '🥤', type: 'phrase', phrase: 'I want water' },
+  { id: 'urinal', label: 'I Need Urinal', icon: '🚻', type: 'phrase', phrase: 'I need the urinal' },
+  { id: 'needs', label: 'Needs / Mobility', icon: '🙋', type: 'category' },
+  { id: 'comfort', label: 'Comfort / Room', icon: '🌡️', type: 'category' },
+  { id: 'care', label: 'Care Tasks', icon: '🪥', type: 'category' },
+  { id: 'schedule', label: 'Schedule', icon: '🕒', type: 'category' },
+  { id: 'tv', label: 'TV / Quiet', icon: '📺', type: 'category' },
+  { id: 'compose', label: 'Type It Out', icon: '⌨️', type: 'action', action: 'compose' }
 ], cats: {
-  needs: { title: 'My Needs', tiles: [
-    { label: 'I Want to Stand', icon: '🧍', phrase: 'I want to stand up please' },
-    { label: 'Standing Frame', icon: '🏋️', phrase: 'I want to use my standing frame' },
-    { label: 'Bathroom', icon: '🚻', phrase: 'I need to go to the bathroom' },
-    { label: 'Suction', icon: '💨', phrase: 'I need the suction machine' },
-    { label: 'Eye Drops', icon: '💧', phrase: 'I need my drops' },
-    { label: 'Water', icon: '🥤', phrase: 'Can I have something to drink?' },
-    { label: 'Food', icon: '🍽️', phrase: "I'm hungry" },
-    { label: 'Too Hot', icon: '🥵', phrase: "I'm too hot, can you adjust the temperature?" },
-    { label: 'Too Cold', icon: '🥶', phrase: "I'm too cold" },
-    { label: 'Reposition', icon: '🔄', phrase: 'Can you help reposition me?' },
-    { label: 'Blanket', icon: '🛏️', phrase: 'Can I have a blanket?' },
-    { label: 'Medication', icon: '💊', phrase: 'I need my medication' }
+  needs: { title: 'Needs / Mobility', tiles: [
+    { label: 'I Want Drops', icon: '💧', phrase: 'I want drops' },
+    { label: 'I Want Water', icon: '🥤', phrase: 'I want water' },
+    { label: 'I Need Urinal', icon: '🚻', phrase: 'I need the urinal' },
+    { label: 'I Want to Stand', icon: '🧍', phrase: 'I want to stand' },
+    { label: 'Ready for Wheelchair', icon: '♿', phrase: "I'm ready to go in my wheelchair" },
+    { label: 'Breathing Treatment', icon: '🫁', phrase: 'I want a breathing treatment' },
+    { label: 'Suction Head Replace', icon: '💨', phrase: 'My suction head needs replacement' },
+    { label: 'Order Something', icon: '🛒', phrase: "There's something I want you to order" }
   ]},
-  feelings: { title: 'How I Feel', tiles: [
-    { label: "I'm Good", icon: '😊', phrase: "I'm doing good" },
-    { label: "I'm Tired", icon: '😴', phrase: "I'm feeling tired" },
-    { label: 'In Pain', icon: '😣', phrase: "I'm in pain", urgent: true },
-    { label: 'Frustrated', icon: '😤', phrase: "I'm feeling frustrated" },
-    { label: 'Bored', icon: '😐', phrase: "I'm bored" },
-    { label: 'Happy', icon: '😄', phrase: "I'm feeling happy" },
-    { label: 'Anxious', icon: '😰', phrase: "I'm feeling anxious" },
-    { label: 'Love You', icon: '❤️', phrase: 'I love you' }
+  comfort: { title: 'Comfort / Room', tiles: [
+    { label: "I'm Cold", icon: '🥶', phrase: "I'm cold" },
+    { label: "I'm Hot", icon: '🥵', phrase: "I'm hot" },
+    { label: 'Reposition Me', icon: '🔄', phrase: 'Reposition me' },
+    { label: 'Help My Head', icon: '🧠', phrase: 'Help me with my head' },
+    { label: 'Open Window', icon: '🪟', phrase: 'Open the window, that smells' },
+    { label: 'AC On', icon: '❄️', phrase: 'Put the air conditioner on' },
+    { label: 'Lower Blinds', icon: '🪟', phrase: 'Lower the blinds' },
+    { label: 'Shut My Light', icon: '💡', phrase: 'Shut my light' }
   ]},
-  social: { title: 'Social', tiles: [
-    { label: 'Hey!', icon: '👋', phrase: "Hey, how's it going?" },
-    { label: "That's Funny", icon: '😂', phrase: "Ha ha, that's funny" },
-    { label: 'Good Morning', icon: '🌅', phrase: 'Good morning' },
-    { label: 'Good Night', icon: '🌙', phrase: 'Good night, sleep well' },
-    { label: 'Miss You', icon: '💙', phrase: 'I miss you' },
-    { label: "What's New?", icon: '📰', phrase: "What's new with you?" },
-    { label: 'Tell Me More', icon: '👂', phrase: 'Tell me more about that' },
-    { label: 'Nice!', icon: '👍', phrase: "That's awesome!" }
+  care: { title: 'Care Tasks', tiles: [
+    { label: 'Cut My Nails', icon: '✂️', phrase: 'Cut my nails' },
+    { label: 'Blow My Nose', icon: '🤧', phrase: 'Blow my nose' },
+    { label: 'Put Braces On', icon: '🦿', phrase: 'Put my braces on' },
+    { label: 'Take Braces Off', icon: '🦿', phrase: 'Take my braces off' },
+    { label: 'Brush Teeth', icon: '🪥', phrase: 'I want to brush my teeth' },
+    { label: 'Charge Headphones', icon: '🎧', phrase: 'Charge my headphones' }
   ]},
-  tv: { title: 'TV / Music', tiles: [
-    { label: 'Turn On TV', icon: '📺', phrase: 'Can you turn on the TV?' },
-    { label: 'Change Channel', icon: '🔄', phrase: 'Can you change the channel?' },
-    { label: 'Volume Up', icon: '🔊', phrase: 'Can you turn it up?' },
-    { label: 'Volume Down', icon: '🔉', phrase: 'Can you turn it down?' },
-    { label: 'Play Music', icon: '🎵', phrase: 'Can you put some music on?' },
-    { label: 'Turn It Off', icon: '⏹️', phrase: 'Can you turn that off?' }
+  schedule: { title: 'Schedule', tiles: [
+    { label: 'Leave Time Today', icon: '🕒', phrase: 'What time do I leave today?' },
+    { label: 'Speech Time', icon: '🗣️', phrase: 'What time is speech?' },
+    { label: 'Tom Arrival', icon: '👤', phrase: 'What time is Tom coming?' }
+  ]},
+  tv: { title: 'TV / Room', tiles: [
+    { label: 'Be Quiet', icon: '🤫', phrase: "Be quiet, I'm watching something on TV" },
+    { label: 'TV in My Room', icon: '📺', phrase: 'Put the TV on in my room' },
+    { label: 'Glasses to Room', icon: '👓', phrase: 'Put my glasses in my room' }
   ]}
-}, qp: ['I want to', 'Can you', 'Please', 'Tell', 'I need', 'Thank you', 'Where is', 'When'] };
+}, qp: ['I want', 'I need', 'Please', 'Can you', 'What time', 'Put', 'Help', 'In my room'] };
 
 // ============================================================
 // SPEECH ENGINE

@@ -7,1266 +7,374 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Big Al">
 <title>Big Al</title>
-<link rel="manifest" href="manifest.json">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&display=swap');
-
-  :root {
-    --bg-primary: #0f1724;
-    --bg-secondary: #1a2538;
-    --bg-tile: #1e2d44;
-    --bg-tile-hover: #263a54;
-    --bg-tile-active: #2f4666;
-    --accent-gold: #f0a830;
-    --accent-gold-dim: #c4892a;
-    --accent-red: #e74c4c;
-    --accent-red-bg: #3d1c1c;
-    --accent-green: #4ade80;
-    --accent-green-bg: #1a3d2a;
-    --text-primary: #f0f0f0;
-    --text-secondary: #8aa0bc;
-    --text-dim: #5a7089;
-    --border-subtle: rgba(255,255,255,0.06);
-    --shadow-tile: 0 2px 8px rgba(0,0,0,0.3);
-    --shadow-tile-active: 0 1px 3px rgba(0,0,0,0.4);
-    --radius: 16px;
-    --tile-gap: 12px;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: 'DM Sans', -apple-system, sans-serif;
-  }
-
-  body {
-    display: flex;
-    flex-direction: column;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
-
-  /* ========== HEADER ========== */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    flex-shrink: 0;
-  }
-
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .header-logo {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 18px;
-    color: var(--bg-primary);
-  }
-
-  .header-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .header-subtitle {
-    font-size: 12px;
-    color: var(--text-dim);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .btn-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: 1px solid var(--border-subtle);
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .btn-icon:active {
-    background: var(--bg-tile-hover);
-  }
-
-  .btn-icon.active {
-    background: var(--accent-gold);
-    color: var(--bg-primary);
-    border-color: var(--accent-gold);
-  }
-
-  /* ========== MAIN CONTENT ========== */
-  .main {
-    flex: 1;
-    overflow: hidden;
-    padding: 0 16px 16px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ========== BOARD VIEW ========== */
-  .board {
-    flex: 1;
-    display: grid;
-    gap: var(--tile-gap);
-    padding: 4px;
-    align-content: stretch;
-  }
-
-  .board.home-board {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-  }
-
-  .board.sub-board {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: auto repeat(2, 1fr);
-  }
-
-  /* ========== TILES ========== */
-  .tile {
-    background: var(--bg-tile);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-tile);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px 12px;
-    cursor: pointer;
-    transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
-    position: relative;
-    overflow: hidden;
-    min-height: 0;
-  }
-
-  .tile:active {
-    transform: scale(0.97);
-    background: var(--bg-tile-active);
-    box-shadow: var(--shadow-tile-active);
-  }
-
-  .tile-icon {
-    font-size: 36px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  .tile-label {
-    font-size: 17px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.2;
-    color: var(--text-primary);
-  }
-
-  .tile-sublabel {
-    font-size: 12px;
-    color: var(--text-dim);
-    font-weight: 600;
-  }
-
-  /* Tile variants */
-  .tile.urgent {
-    background: var(--accent-red-bg);
-    border-color: rgba(231, 76, 76, 0.3);
-  }
-
-  .tile.urgent .tile-label {
-    color: var(--accent-red);
-  }
-
-  .tile.confirm-yes {
-    background: var(--accent-green-bg);
-    border-color: rgba(74, 222, 128, 0.2);
-  }
-
-  .tile.confirm-yes .tile-label {
-    color: var(--accent-green);
-  }
-
-  .tile.category {
-    border-color: rgba(240, 168, 48, 0.15);
-  }
-
-  .tile.category .tile-label {
-    color: var(--accent-gold);
-  }
-
-  .tile.action {
-    background: var(--bg-secondary);
-  }
-
-  /* Category indicator */
-  .tile.category::after {
-    content: '›';
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 24px;
-    color: var(--text-dim);
-    font-weight: 300;
-  }
-
-  /* ========== SUB-BOARD BACK BUTTON ========== */
-  .sub-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    grid-column: 1 / -1;
-  }
-
-  .btn-back {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    font-size: 16px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .btn-back:active {
-    background: var(--bg-tile-hover);
-  }
-
-  .sub-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--accent-gold);
-  }
-
-  /* ========== COMPOSE VIEW ========== */
-  .compose-view {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .compose-view.active {
-    display: flex;
-  }
-
-  .compose-output {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius);
-    padding: 20px;
-    min-height: 100px;
-    font-size: 24px;
-    font-weight: 600;
-    font-family: inherit;
-    color: var(--text-primary);
-    line-height: 1.4;
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-  }
-
-  .compose-text {
-    flex: 1;
-    min-height: 60px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .compose-cursor {
-    display: inline-block;
-    width: 3px;
-    height: 28px;
-    background: var(--accent-gold);
-    animation: blink 1s step-end infinite;
-    vertical-align: text-bottom;
-    margin-left: 2px;
-  }
-
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-
-  .compose-actions {
-    display: flex;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .compose-btn {
-    flex: 1;
-    padding: 18px;
-    border-radius: 14px;
-    border: 1px solid var(--border-subtle);
-    font-size: 18px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: transform 0.1s, background 0.1s;
-  }
-
-  .compose-btn:active {
-    transform: scale(0.97);
-  }
-
-  .compose-btn.speak {
-    background: var(--accent-gold);
-    color: var(--bg-primary);
-    border-color: var(--accent-gold);
-  }
-
-  .compose-btn.clear {
-    background: var(--bg-tile);
-    color: var(--text-secondary);
-  }
-
-  .compose-btn.back {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    flex: 0.5;
-  }
-
-  .compose-btn.backspace {
-    background: var(--bg-tile);
-    color: var(--text-secondary);
-    flex: 0.5;
-  }
-
-  .quick-phrases {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .quick-phrase {
-    padding: 14px 10px;
-    background: var(--bg-tile);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-    color: var(--text-primary);
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .quick-phrase:active {
-    background: var(--bg-tile-active);
-  }
-
-  .compose-keyboard {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 6px;
-    flex: 1;
-    align-content: center;
-  }
-
-  .key {
-    padding: 14px 4px;
-    background: var(--bg-tile);
-    border: 1px solid var(--border-subtle);
-    border-radius: 10px;
-    font-size: 20px;
-    font-weight: 600;
-    font-family: inherit;
-    color: var(--text-primary);
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .key:active {
-    background: var(--bg-tile-active);
-  }
-
-  .key.space {
-    grid-column: span 4;
-    font-size: 14px;
-    color: var(--text-dim);
-  }
-
-  .key.wide {
-    grid-column: span 2;
-  }
-
-  /* ========== SPEAKING INDICATOR ========== */
-  .speaking-indicator {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--accent-gold);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-    z-index: 100;
-  }
-
-  .speaking-indicator.active {
-    transform: scaleX(1);
-    animation: speakPulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes speakPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  /* ========== LAST SPOKEN BANNER ========== */
-  .last-spoken {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: rgba(30, 45, 68, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border-subtle);
-    border-radius: 14px;
-    padding: 14px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 50;
-    max-width: 80%;
-  }
-
-  .last-spoken.visible {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .last-spoken-icon {
-    color: var(--accent-gold);
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  .btn-repeat {
-    padding: 8px 14px;
-    background: var(--bg-tile);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    color: var(--accent-gold);
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s;
-  }
-
-  .btn-repeat:active {
-    background: var(--bg-tile-active);
-  }
-
-  /* ========== VOLUME SLIDER (SETTINGS) ========== */
-  .settings-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-  }
-
-  .settings-overlay.active {
-    display: flex;
-  }
-
-  .settings-panel {
-    background: var(--bg-secondary);
-    border-radius: 20px;
-    padding: 30px;
-    width: 500px;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-    border: 1px solid var(--border-subtle);
-  }
-
-  .settings-title {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .settings-close {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--border-subtle);
-    background: var(--bg-tile);
-    color: var(--text-secondary);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .setting-label {
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .setting-desc {
-    font-size: 13px;
-    color: var(--text-dim);
-    margin-top: 2px;
-  }
-
-  .setting-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  input[type="range"] {
-    -webkit-appearance: none;
-    width: 150px;
-    height: 8px;
-    background: var(--bg-tile);
-    border-radius: 4px;
-    outline: none;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 28px;
-    height: 28px;
-    background: var(--accent-gold);
-    border-radius: 50%;
-    cursor: pointer;
-  }
-
-  select {
-    padding: 10px 14px;
-    background: var(--bg-tile);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 14px;
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
-    -webkit-appearance: none;
-    padding-right: 30px;
-  }
-
-  /* ========== CAREGIVER ALERT ========== */
-  .alert-flash {
-    position: fixed;
-    inset: 0;
-    background: rgba(231, 76, 76, 0.15);
-    z-index: 300;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .alert-flash.active {
-    opacity: 1;
-    animation: alertPulse 0.6s ease-in-out 3;
-  }
-
-  @keyframes alertPulse {
-    0%, 100% { opacity: 0; }
-    50% { opacity: 1; }
-  }
-
-  /* ========== TRANSITIONS ========== */
-  .board {
-    transition: opacity 0.2s, transform 0.2s;
-  }
-
-  .board.hidden {
-    display: none;
-  }
-
-  /* ========== RESPONSIVE ========== */
-  @media (max-height: 600px) {
-    .tile-icon { font-size: 28px; }
-    .tile-label { font-size: 15px; }
-    .header { padding: 8px 16px; }
-    .tile { padding: 10px 8px; gap: 4px; }
-  }
-
-  @media (orientation: portrait) {
-    .board.home-board {
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-    }
-    .board.sub-board {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .quick-phrases {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&display=swap');
+:root{--bg:#0f1724;--bg2:#1a2538;--tile:#1e2d44;--tile-h:#263a54;--tile-a:#2f4666;--gold:#f0a830;--gold-d:#c4892a;--red:#e74c4c;--red-bg:#3d1c1c;--green:#4ade80;--green-bg:#1a3d2a;--t1:#f0f0f0;--t2:#8aa0bc;--t3:#5a7089;--brd:rgba(255,255,255,0.06);--sh:0 2px 8px rgba(0,0,0,0.3);--r:16px;--gap:12px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',-apple-system,sans-serif}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;flex-shrink:0}
+.hdr-b{display:flex;align-items:center;gap:10px}
+.hdr-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold-d));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--bg)}
+.hdr-t{font-size:22px;font-weight:700}
+.hdr-s{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.hdr-a{display:flex;gap:8px;align-items:center}
+.bi{width:44px;height:44px;border-radius:12px;border:1px solid var(--brd);background:var(--bg2);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+.bi:active{background:var(--tile-h)}
+.main{flex:1;overflow:hidden;padding:0 16px 12px;display:flex;flex-direction:column}
+.board{flex:1;display:grid;gap:var(--gap);padding:4px;align-content:stretch}
+.board.hb{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}
+.board.sb{grid-template-columns:repeat(4,1fr);grid-template-rows:auto repeat(2,1fr)}
+.board.hid{display:none}
+.tile{background:var(--tile);border-radius:var(--r);border:1px solid var(--brd);box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 12px;cursor:pointer;transition:transform .1s,background .1s;position:relative;overflow:hidden;min-height:0}
+.tile:active{transform:scale(.97);background:var(--tile-a)}
+.tile-i{font-size:34px;line-height:1;flex-shrink:0}
+.tile-l{font-size:16px;font-weight:700;text-align:center;line-height:1.2}
+.tile.urgent{background:var(--red-bg);border-color:rgba(231,76,76,.3)}
+.tile.urgent .tile-l{color:var(--red)}
+.tile.confirm-yes{background:var(--green-bg);border-color:rgba(74,222,128,.2)}
+.tile.confirm-yes .tile-l{color:var(--green)}
+.tile.category{border-color:rgba(240,168,48,.15)}
+.tile.category .tile-l{color:var(--gold)}
+.tile.category::after{content:'›';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--t3);font-weight:300}
+.tile.action{background:var(--bg2)}
+.tile.spk{animation:tp .8s ease-in-out}
+@keyframes tp{0%{box-shadow:0 0 0 0 rgba(240,168,48,.4)}50%{box-shadow:0 0 0 8px rgba(240,168,48,0)}100%{box-shadow:var(--sh)}}
+.shdr{display:flex;align-items:center;gap:12px;padding:6px 0;grid-column:1/-1}
+.bb{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--bg2);border:1px solid var(--brd);border-radius:12px;color:var(--t2);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
+.bb:active{background:var(--tile-h)}
+.st{font-size:20px;font-weight:700;color:var(--gold)}
+.cv{flex:1;display:none;flex-direction:column;gap:10px}
+.cv.act{display:flex}
+.co{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:16px 20px;min-height:80px;font-size:22px;font-weight:600;font-family:inherit;color:var(--t1);line-height:1.4;display:flex;align-items:flex-start}
+.ct{flex:1;min-height:50px;word-wrap:break-word;overflow-wrap:break-word}
+.cc{display:inline-block;width:3px;height:26px;background:var(--gold);animation:bl 1s step-end infinite;vertical-align:text-bottom;margin-left:2px}
+@keyframes bl{50%{opacity:0}}
+.ca{display:flex;gap:8px;flex-shrink:0}
+.cb{flex:1;padding:16px;border-radius:14px;border:1px solid var(--brd);font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.cb:active{transform:scale(.97)}
+.cb.sp{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.cb.cl{background:var(--tile);color:var(--t2)}
+.cb.bk{background:var(--bg2);color:var(--t2);flex:.6}
+.cb.bs{background:var(--tile);color:var(--t2);flex:.6}
+.qp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0}
+.qpb{padding:12px 8px;background:var(--tile);border:1px solid var(--brd);border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:var(--t1);text-align:center;cursor:pointer}
+.qpb:active{background:var(--tile-a)}
+.kb{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;flex:1;align-content:center}
+.k{padding:12px 4px;background:var(--tile);border:1px solid var(--brd);border-radius:10px;font-size:19px;font-weight:600;font-family:inherit;color:var(--t1);text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.k:active{background:var(--tile-a)}
+.k.spc{grid-column:span 4;font-size:13px;color:var(--t3)}
+.sbar{position:fixed;top:0;left:0;right:0;height:4px;background:var(--gold);transform:scaleX(0);transform-origin:left;z-index:100}
+.sbar.act{transform:scaleX(1);animation:sp 1.2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:1}50%{opacity:.4}}
+.ls{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(30,45,68,.95);backdrop-filter:blur(10px);border:1px solid var(--brd);border-radius:14px;padding:12px 20px;font-size:15px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:10px;transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:50;max-width:80%}
+.ls.vis{transform:translateX(-50%) translateY(0)}
+.ls-i{color:var(--gold);font-size:16px;flex-shrink:0}
+.rpt{padding:8px 14px;background:var(--tile);border:1px solid var(--brd);border-radius:8px;color:var(--gold);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+.af{position:fixed;inset:0;background:rgba(231,76,76,.15);z-index:300;pointer-events:none;opacity:0}
+.af.act{opacity:1;animation:ap .6s ease-in-out 3}
+@keyframes ap{0%,100%{opacity:0}50%{opacity:1}}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:200}
+.ov.act{display:flex}
+.pn{background:var(--bg2);border-radius:20px;padding:28px;width:560px;max-width:92vw;max-height:85vh;overflow-y:auto;border:1px solid var(--brd)}
+.pn-t{font-size:22px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.pn-x{width:40px;height:40px;border-radius:10px;border:1px solid var(--brd);background:var(--tile);color:var(--t2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--brd)}
+.sl{font-size:16px;font-weight:600}
+.sd{font-size:12px;color:var(--t3);margin-top:2px}
+.sc{display:flex;align-items:center;gap:10px}
+input[type=range]{-webkit-appearance:none;width:140px;height:8px;background:var(--tile);border-radius:4px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;background:var(--gold);border-radius:50%;cursor:pointer}
+.vg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.vc{background:var(--tile);border:2px solid var(--brd);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s,background .2s}
+.vc:active{background:var(--tile-a)}
+.vc.sel{border-color:var(--gold);background:rgba(240,168,48,.08)}
+.vc-n{font-size:17px;font-weight:700;margin-bottom:4px}
+.vc-d{font-size:12px;color:var(--t3);line-height:1.3}
+.vc-p{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;color:var(--gold);cursor:pointer}
+.vc-p:active{background:var(--tile-h)}
+.vc-p.ld{opacity:.5;pointer-events:none}
+.vs{text-align:center;padding:12px;font-size:13px;color:var(--t3)}
+.vs.err{color:var(--red)}.vs.ok{color:var(--green)}
+@media(max-height:600px){.tile-i{font-size:26px}.tile-l{font-size:14px}.hdr{padding:6px 16px}.tile{padding:8px 6px;gap:3px}}
+@media(orientation:portrait){.board.hb{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr)}.board.sb{grid-template-columns:repeat(3,1fr)}.qp{grid-template-columns:repeat(3,1fr)}.vg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<!-- Speaking indicator bar -->
-<div class="speaking-indicator" id="speakingIndicator"></div>
-
-<!-- Alert flash overlay -->
-<div class="alert-flash" id="alertFlash"></div>
-
-<!-- ===== HEADER ===== -->
-<header class="header">
-  <div class="header-brand">
-    <div class="header-logo">A</div>
-    <div>
-      <div class="header-title">Big Al</div>
-      <div class="header-subtitle">Alex's Voice</div>
-    </div>
-  </div>
-  <div class="header-actions">
-    <button class="btn-icon" id="btnRepeatLast" title="Repeat last" aria-label="Repeat last phrase">🔁</button>
-    <button class="btn-icon" id="btnVolumeUp" title="Louder" aria-label="Increase volume">🔊</button>
-    <button class="btn-icon" id="btnSettings" title="Settings" aria-label="Settings">⚙️</button>
-  </div>
+<div class="sbar" id="sbar"></div>
+<div class="af" id="af"></div>
+<header class="hdr">
+  <div class="hdr-b"><div class="hdr-logo">A</div><div><div class="hdr-t">Big Al</div><div class="hdr-s">Alex's Voice</div></div></div>
+  <div class="hdr-a"><button class="bi" id="bRpt" title="Repeat last">🔁</button><button class="bi" id="bSet" title="Settings">⚙️</button></div>
 </header>
-
-<!-- ===== MAIN CONTENT ===== -->
 <main class="main">
-  <!-- Home Board -->
-  <div class="board home-board" id="homeBoard"></div>
-
-  <!-- Sub Board (categories) -->
-  <div class="board sub-board hidden" id="subBoard"></div>
-
-  <!-- Compose View -->
-  <div class="compose-view" id="composeView">
-    <div class="compose-output">
-      <div class="compose-text" id="composeText"></div>
-      <div class="compose-cursor"></div>
+  <div class="board hb" id="hb"></div>
+  <div class="board sb hid" id="sb"></div>
+  <div class="cv" id="cv">
+    <div class="co"><div class="ct" id="ctxt"></div><div class="cc"></div></div>
+    <div class="ca">
+      <button class="cb bk" id="cBk">← Back</button>
+      <button class="cb bs" id="cBs">⌫</button>
+      <button class="cb cl" id="cCl">Clear</button>
+      <button class="cb sp" id="cSp">🔊 Speak</button>
     </div>
-    <div class="compose-actions">
-      <button class="compose-btn back" id="composeBack">← Back</button>
-      <button class="compose-btn backspace" id="composeBackspace">⌫ Delete</button>
-      <button class="compose-btn clear" id="composeClear">Clear</button>
-      <button class="compose-btn speak" id="composeSpeak">🔊 Speak</button>
-    </div>
-    <div class="quick-phrases" id="quickPhrases"></div>
-    <div class="compose-keyboard" id="composeKeyboard"></div>
+    <div class="qp" id="qp"></div>
+    <div class="kb" id="kb"></div>
   </div>
 </main>
-
-<!-- Last spoken banner -->
-<div class="last-spoken" id="lastSpoken">
-  <span class="last-spoken-icon">🔊</span>
-  <span id="lastSpokenText"></span>
-  <button class="btn-repeat" id="btnRepeatBanner">Repeat</button>
-</div>
-
-<!-- Settings overlay -->
-<div class="settings-overlay" id="settingsOverlay">
-  <div class="settings-panel">
-    <div class="settings-title">
-      Settings
-      <button class="settings-close" id="settingsClose">✕</button>
-    </div>
-
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Voice</div>
-        <div class="setting-desc">Choose the speaking voice</div>
-      </div>
-      <div class="setting-control">
-        <select id="voiceSelect"></select>
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Speech Speed</div>
-        <div class="setting-desc">How fast the voice speaks</div>
-      </div>
-      <div class="setting-control">
-        <span id="rateValue">1.0</span>
-        <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="1.0">
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Pitch</div>
-        <div class="setting-desc">Voice pitch level</div>
-      </div>
-      <div class="setting-control">
-        <span id="pitchValue">1.0</span>
-        <input type="range" id="pitchSlider" min="0.5" max="1.5" step="0.1" value="1.0">
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Volume</div>
-        <div class="setting-desc">Speaker volume</div>
-      </div>
-      <div class="setting-control">
-        <span id="volumeValue">100%</span>
-        <input type="range" id="volumeSlider" min="0.3" max="1" step="0.1" value="1">
-      </div>
-    </div>
-
-    <div class="setting-row" style="border: none; padding-top: 20px;">
-      <div>
-        <div class="setting-label" style="color: var(--text-dim);">Big Al v1.0</div>
-        <div class="setting-desc">Made with love for Alex</div>
-      </div>
-    </div>
+<div class="ls" id="ls"><span class="ls-i">🔊</span><span id="lst"></span><button class="rpt" id="bRptB">Repeat</button></div>
+<div class="ov" id="sOv">
+  <div class="pn">
+    <div class="pn-t">Settings<button class="pn-x" id="sX">✕</button></div>
+    <div class="sr" style="cursor:pointer" id="oVP"><div><div class="sl">Voice</div><div class="sd" id="cvn">Loading...</div></div><div class="sc" style="color:var(--gold);font-size:20px">›</div></div>
+    <div class="sr"><div><div class="sl">Speech Speed</div><div class="sd">Slower is clearer for speeches</div></div><div class="sc"><span id="rv">0.9</span><input type="range" id="rs" min="0.5" max="1.3" step="0.1" value="0.9"></div></div>
+    <div class="sr"><div><div class="sl">Voice Engine</div><div class="sd" id="es">Checking...</div></div><div class="sc"><span id="ei" style="font-size:24px">⏳</span></div></div>
+    <div class="sr" style="border:none;padding-top:16px"><div><div class="sl" style="color:var(--t3)">Big Al v2.0</div><div class="sd">Made with love for Alex 💛</div></div></div>
   </div>
 </div>
-
+<div class="ov" id="vOv">
+  <div class="pn" style="width:620px">
+    <div class="pn-t">Choose Alex's Voice<button class="pn-x" id="vX">✕</button></div>
+    <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.5">Tap <strong>Preview</strong> to hear each voice. Pick the one that feels right for Alex.</p>
+    <div class="vg" id="vg"></div>
+    <div class="vs" id="vst"></div>
+  </div>
+</div>
 <script>
-// ============================================================
-// BIG AL — Configuration & Core Logic
-// ============================================================
+const EL={key:'[REDACTED_ELEVENLABS_KEY]',url:'https://api.elevenlabs.io/v1',voices:[
+{id:'pNInz6obpgDQGcFmaJgB',name:'Adam',desc:'Deep, warm, clear. Great for conversation and speeches.'},
+{id:'TxGEqnHWrfWFTfGW9XjX',name:'Josh',desc:'Conversational, friendly, natural cadence.'},
+{id:'ErXwobaYiN019PkySvjV',name:'Antoni',desc:'Warm, well-paced, articulate.'},
+{id:'VR6AewLTigWG4xSOukaG',name:'Arnold',desc:'Strong, confident, deeper register.'},
+{id:'ODq5zmih8GrVes37Dizd',name:'Patrick',desc:'Calm, steady, mature tone.'},
+{id:'ZQe5CZNOzWyzPSCn5a3c',name:'James',desc:'Authoritative, clear, composed.'}
+],model:'eleven_multilingual_v2',sample:"Hey, how's it going? I'm doing great today."};
 
-// --- BOARD CONFIGURATION ---
-// This is the central config. Caregivers can edit phrases here.
-const CONFIG = {
-  // Home board tiles (max ~12 for landscape 4-col layout)
-  home: [
-    { id: 'urgent', label: 'I Need Help', icon: '🚨', type: 'urgent', phrase: 'I need help right now', alert: true },
-    { id: 'needs', label: 'My Needs', icon: '🙋', type: 'category' },
-    { id: 'feelings', label: 'How I Feel', icon: '💭', type: 'category' },
-    { id: 'social', label: 'Social', icon: '💬', type: 'category' },
-    { id: 'yes', label: 'Yes', icon: '✅', type: 'confirm-yes', phrase: 'Yes' },
-    { id: 'no', label: 'No', icon: '❌', type: 'phrase', phrase: 'No' },
-    { id: 'thanks', label: 'Thank You', icon: '🙏', type: 'phrase', phrase: 'Thank you' },
-    { id: 'repeat', label: 'Say Again?', icon: '🔄', type: 'phrase', phrase: 'Can you say that again please?' },
-    { id: 'compose', label: 'Type Message', icon: '⌨️', type: 'action', action: 'compose' },
-    { id: 'wait', label: 'Hold On', icon: '✋', type: 'phrase', phrase: 'Hold on, give me a moment' },
-    { id: 'tv', label: 'TV / Music', icon: '📺', type: 'category' },
-    { id: 'mom', label: 'Call Mom', icon: '📞', type: 'phrase', phrase: 'Can someone call Mom for me?' },
-  ],
+const cache=new Map();let curAudio=null;
+const S={view:'home',cat:null,txt:'',last:'',lastU:false,speaking:false,voice:null,elOk:false};
 
-  // Category sub-boards
-  categories: {
-    needs: {
-      title: 'My Needs',
-      tiles: [
-        { label: 'I Want to Stand', icon: '🧍', phrase: 'I want to stand up please' },
-        { label: 'Standing Frame', icon: '🏋️', phrase: 'I want to use my standing frame' },
-        { label: 'Bathroom', icon: '🚻', phrase: 'I need to go to the bathroom' },
-        { label: 'Suction Machine', icon: '💨', phrase: 'I need the suction machine' },
-        { label: 'Eye Drops', icon: '💧', phrase: 'I need my drops' },
-        { label: 'Water / Drink', icon: '🥤', phrase: 'Can I have something to drink?' },
-        { label: 'Food', icon: '🍽️', phrase: 'I\'m hungry' },
-        { label: 'Too Hot', icon: '🥵', phrase: 'I\'m too hot, can you adjust the temperature?' },
-        { label: 'Too Cold', icon: '🥶', phrase: 'I\'m too cold' },
-        { label: 'Reposition Me', icon: '🔄', phrase: 'Can you help reposition me?' },
-        { label: 'Blanket', icon: '🛏️', phrase: 'Can I have a blanket?' },
-        { label: 'Medication', icon: '💊', phrase: 'I need my medication' },
-      ]
-    },
-    feelings: {
-      title: 'How I Feel',
-      tiles: [
-        { label: 'I\'m Good', icon: '😊', phrase: 'I\'m doing good' },
-        { label: 'I\'m Tired', icon: '😴', phrase: 'I\'m feeling tired' },
-        { label: 'In Pain', icon: '😣', phrase: 'I\'m in pain', urgent: true },
-        { label: 'Frustrated', icon: '😤', phrase: 'I\'m feeling frustrated' },
-        { label: 'Bored', icon: '😐', phrase: 'I\'m bored' },
-        { label: 'Happy', icon: '😄', phrase: 'I\'m feeling happy' },
-        { label: 'Anxious', icon: '😰', phrase: 'I\'m feeling anxious' },
-        { label: 'Love You', icon: '❤️', phrase: 'I love you' },
-      ]
-    },
-    social: {
-      title: 'Social',
-      tiles: [
-        { label: 'Hey!', icon: '👋', phrase: 'Hey, how\'s it going?' },
-        { label: 'That\'s Funny', icon: '😂', phrase: 'Ha ha, that\'s funny' },
-        { label: 'Good Morning', icon: '🌅', phrase: 'Good morning' },
-        { label: 'Good Night', icon: '🌙', phrase: 'Good night, sleep well' },
-        { label: 'Miss You', icon: '💙', phrase: 'I miss you' },
-        { label: 'What\'s New?', icon: '📰', phrase: 'What\'s new with you?' },
-        { label: 'Tell Me More', icon: '👂', phrase: 'Tell me more about that' },
-        { label: 'Nice!', icon: '👍', phrase: 'That\'s awesome!' },
-      ]
-    },
-    tv: {
-      title: 'TV / Music',
-      tiles: [
-        { label: 'Turn On TV', icon: '📺', phrase: 'Can you turn on the TV?' },
-        { label: 'Change Channel', icon: '🔄', phrase: 'Can you change the channel?' },
-        { label: 'Volume Up', icon: '🔊', phrase: 'Can you turn it up?' },
-        { label: 'Volume Down', icon: '🔉', phrase: 'Can you turn it down?' },
-        { label: 'Play Music', icon: '🎵', phrase: 'Can you put some music on?' },
-        { label: 'Turn It Off', icon: '⏹️', phrase: 'Can you turn that off?' },
-      ]
-    }
-  },
+const CFG={home:[
+{id:'urgent',label:'I Need Help',icon:'🚨',type:'urgent',phrase:'I need help right now',alert:true},
+{id:'needs',label:'My Needs',icon:'🙋',type:'category'},
+{id:'feelings',label:'How I Feel',icon:'💭',type:'category'},
+{id:'social',label:'Social',icon:'💬',type:'category'},
+{id:'yes',label:'Yes',icon:'✅',type:'confirm-yes',phrase:'Yes'},
+{id:'no',label:'No',icon:'❌',type:'phrase',phrase:'No'},
+{id:'thanks',label:'Thank You',icon:'🙏',phrase:'Thank you'},
+{id:'repeat',label:'Say Again?',icon:'🔄',phrase:'Can you say that again please?'},
+{id:'compose',label:'Type It Out',icon:'⌨️',type:'action',action:'compose'},
+{id:'wait',label:'Hold On',icon:'✋',phrase:'Hold on, give me a moment'},
+{id:'tv',label:'TV / Music',icon:'📺',type:'category'},
+{id:'mom',label:'Call Mom',icon:'📞',phrase:'Can someone call Mom for me?'}
+],cats:{
+needs:{title:'My Needs',tiles:[
+{label:'I Want to Stand',icon:'🧍',phrase:'I want to stand up please'},
+{label:'Standing Frame',icon:'🏋️',phrase:'I want to use my standing frame'},
+{label:'Bathroom',icon:'🚻',phrase:'I need to go to the bathroom'},
+{label:'Suction',icon:'💨',phrase:'I need the suction machine'},
+{label:'Eye Drops',icon:'💧',phrase:'I need my drops'},
+{label:'Water',icon:'🥤',phrase:'Can I have something to drink?'},
+{label:'Food',icon:'🍽️',phrase:"I'm hungry"},
+{label:'Too Hot',icon:'🥵',phrase:"I'm too hot, can you adjust the temperature?"},
+{label:'Too Cold',icon:'🥶',phrase:"I'm too cold"},
+{label:'Reposition',icon:'🔄',phrase:'Can you help reposition me?'},
+{label:'Blanket',icon:'🛏️',phrase:'Can I have a blanket?'},
+{label:'Medication',icon:'💊',phrase:'I need my medication'}
+]},
+feelings:{title:'How I Feel',tiles:[
+{label:"I'm Good",icon:'😊',phrase:"I'm doing good"},
+{label:"I'm Tired",icon:'😴',phrase:"I'm feeling tired"},
+{label:'In Pain',icon:'😣',phrase:"I'm in pain",urgent:true},
+{label:'Frustrated',icon:'😤',phrase:"I'm feeling frustrated"},
+{label:'Bored',icon:'😐',phrase:"I'm bored"},
+{label:'Happy',icon:'😄',phrase:"I'm feeling happy"},
+{label:'Anxious',icon:'😰',phrase:"I'm feeling anxious"},
+{label:'Love You',icon:'❤️',phrase:'I love you'}
+]},
+social:{title:'Social',tiles:[
+{label:'Hey!',icon:'👋',phrase:"Hey, how's it going?"},
+{label:"That's Funny",icon:'😂',phrase:"Ha ha, that's funny"},
+{label:'Good Morning',icon:'🌅',phrase:'Good morning'},
+{label:'Good Night',icon:'🌙',phrase:'Good night, sleep well'},
+{label:'Miss You',icon:'💙',phrase:'I miss you'},
+{label:"What's New?",icon:'📰',phrase:"What's new with you?"},
+{label:'Tell Me More',icon:'👂',phrase:'Tell me more about that'},
+{label:'Nice!',icon:'👍',phrase:"That's awesome!"}
+]},
+tv:{title:'TV / Music',tiles:[
+{label:'Turn On TV',icon:'📺',phrase:'Can you turn on the TV?'},
+{label:'Change Channel',icon:'🔄',phrase:'Can you change the channel?'},
+{label:'Volume Up',icon:'🔊',phrase:'Can you turn it up?'},
+{label:'Volume Down',icon:'🔉',phrase:'Can you turn it down?'},
+{label:'Play Music',icon:'🎵',phrase:'Can you put some music on?'},
+{label:'Turn It Off',icon:'⏹️',phrase:'Can you turn that off?'}
+]}},
+qp:['I want to','Can you','Please','Tell','I need','Thank you','Where is','When']};
 
-  // Quick phrases for compose mode
-  quickPhrases: [
-    'I want to',
-    'Can you',
-    'Please',
-    'Tell',
-    'I need',
-    'Thank you',
-    'Where is',
-    'When',
-  ],
-
-  // Voice settings (persisted to localStorage)
-  voice: {
-    rate: 1.0,
-    pitch: 1.0,
-    volume: 1.0,
-    voiceURI: null, // null = auto-select best male voice
-  }
-};
-
-// ============================================================
-// STATE
-// ============================================================
-let state = {
-  currentView: 'home', // 'home', 'category', 'compose'
-  currentCategory: null,
-  composeText: '',
-  lastSpokenPhrase: '',
-  isSpeaking: false,
-};
-
-// ============================================================
-// SPEECH ENGINE
-// ============================================================
-const synth = window.speechSynthesis;
-let voices = [];
-let selectedVoice = null;
-
-function loadVoices() {
-  voices = synth.getVoices();
-  populateVoiceSelect();
-  selectBestVoice();
+// === SPEECH ENGINE ===
+async function elSpeak(text,urg){
+  const vid=S.voice||EL.voices[0].id, ck=vid+':'+text;
+  if(cache.has(ck)){play(cache.get(ck),urg);return true}
+  try{
+    const r=await fetch(EL.url+'/text-to-speech/'+vid,{method:'POST',
+      headers:{'Content-Type':'application/json','xi-api-key':EL.key},
+      body:JSON.stringify({text,model_id:EL.model,voice_settings:{stability:.5,similarity_boost:.75,style:.3,use_speaker_boost:true}})});
+    if(!r.ok)return false;
+    const b=await r.blob(),u=URL.createObjectURL(b);
+    cache.set(ck,u);
+    if(cache.size>60){const o=cache.keys().next().value;URL.revokeObjectURL(cache.get(o));cache.delete(o)}
+    play(u,urg);return true;
+  }catch(e){return false}
 }
 
-function selectBestVoice() {
-  const savedURI = loadSetting('voiceURI');
-  if (savedURI) {
-    selectedVoice = voices.find(v => v.voiceURI === savedURI) || null;
-  }
-  if (!selectedVoice) {
-    // Prefer enhanced/premium English male voices
-    const prefs = [
-      v => v.lang.startsWith('en') && v.name.toLowerCase().includes('daniel'),
-      v => v.lang.startsWith('en') && v.name.toLowerCase().includes('aaron'),
-      v => v.lang.startsWith('en') && v.name.toLowerCase().includes('james'),
-      v => v.lang.startsWith('en') && (v.name.toLowerCase().includes('enhanced') || v.name.toLowerCase().includes('premium')),
-      v => v.lang.startsWith('en-US'),
-      v => v.lang.startsWith('en'),
-    ];
-    for (const pref of prefs) {
-      selectedVoice = voices.find(pref);
-      if (selectedVoice) break;
-    }
-  }
-  // Update select
-  const sel = document.getElementById('voiceSelect');
-  if (sel && selectedVoice) {
-    sel.value = selectedVoice.voiceURI;
+function play(u,urg){
+  if(curAudio){curAudio.pause();curAudio=null}
+  const a=new Audio(u);
+  a.volume=urg?1:parseFloat(ld('vol')||1);
+  a.playbackRate=parseFloat(ld('rate')||.9);
+  curAudio=a;
+  a.onplay=()=>{S.speaking=true;$('sbar').classList.add('act')};
+  a.onended=a.onerror=()=>{S.speaking=false;$('sbar').classList.remove('act');curAudio=null};
+  a.play().catch(()=>{S.speaking=false;$('sbar').classList.remove('act')});
+}
+
+function fallback(text,urg){
+  const sy=speechSynthesis;sy.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=parseFloat(ld('rate')||.9);u.volume=urg?1:parseFloat(ld('vol')||1);
+  const v=sy.getVoices(),p=v.find(x=>x.lang.startsWith('en')&&x.name.toLowerCase().includes('daniel'))||v.find(x=>x.lang.startsWith('en')&&(x.name.includes('Enhanced')||x.name.includes('Premium')))||v.find(x=>x.lang.startsWith('en-US'));
+  if(p)u.voice=p;
+  u.onstart=()=>{S.speaking=true;$('sbar').classList.add('act')};
+  u.onend=()=>{S.speaking=false;$('sbar').classList.remove('act')};
+  sy.speak(u);
+}
+
+async function speak(text,urg,el){
+  if(!text)return;
+  if(el){el.classList.add('spk');setTimeout(()=>el.classList.remove('spk'),800)}
+  S.last=text;S.lastU=urg||false;showLS(text);
+  if(S.elOk){if(!await elSpeak(text,urg))fallback(text,urg)}else fallback(text,urg);
+}
+
+async function testEL(){
+  try{const r=await fetch(EL.url+'/voices',{headers:{'xi-api-key':EL.key}});
+    if(r.ok){S.elOk=true;$('es').textContent='ElevenLabs connected ✓';$('ei').textContent='🟢';return true}}catch(e){}
+  S.elOk=false;$('es').textContent='Offline — using device voice';$('ei').textContent='🟡';return false;
+}
+
+async function preCache(){
+  if(!S.elOk)return;
+  const phrases=['Yes','No','Thank you','I need help right now','Hold on, give me a moment',"Can you say that again please?","I want to stand up please","I need to go to the bathroom","I need the suction machine","I need my drops"];
+  for(const p of phrases){
+    const vid=S.voice||EL.voices[0].id,ck=vid+':'+p;
+    if(cache.has(ck))continue;
+    try{const r=await fetch(EL.url+'/text-to-speech/'+vid,{method:'POST',headers:{'Content-Type':'application/json','xi-api-key':EL.key},
+      body:JSON.stringify({text:p,model_id:EL.model,voice_settings:{stability:.5,similarity_boost:.75,style:.3,use_speaker_boost:true}})});
+      if(r.ok){const b=await r.blob();cache.set(ck,URL.createObjectURL(b))}}catch(e){}
+    await new Promise(r=>setTimeout(r,400));
   }
 }
 
-function speak(text, urgent = false) {
-  if (!text) return;
-  synth.cancel(); // Stop any current speech
+// === UI HELPERS ===
+function $(id){return document.getElementById(id)}
+function sv(k,v){try{localStorage.setItem('ba_'+k,JSON.stringify(v))}catch(e){}}
+function ld(k){try{const v=localStorage.getItem('ba_'+k);return v?JSON.parse(v):null}catch(e){return null}}
 
-  const utter = new SpeechSynthesisUtterance(text);
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate = parseFloat(loadSetting('rate') || CONFIG.voice.rate);
-  utter.pitch = parseFloat(loadSetting('pitch') || CONFIG.voice.pitch);
-  utter.volume = urgent ? 1.0 : parseFloat(loadSetting('volume') || CONFIG.voice.volume);
+let lsT;
+function showLS(t){$('lst').textContent=t;$('ls').classList.add('vis');clearTimeout(lsT);lsT=setTimeout(()=>$('ls').classList.remove('vis'),8000)}
 
-  utter.onstart = () => {
-    state.isSpeaking = true;
-    document.getElementById('speakingIndicator').classList.add('active');
-  };
-  utter.onend = () => {
-    state.isSpeaking = false;
-    document.getElementById('speakingIndicator').classList.remove('active');
-  };
-  utter.onerror = () => {
-    state.isSpeaking = false;
-    document.getElementById('speakingIndicator').classList.remove('active');
-  };
+function alert_(){$('af').classList.add('act');setTimeout(()=>$('af').classList.remove('act'),2000);
+  if('Notification'in window&&Notification.permission==='granted')new Notification('Big Al — Alex Needs Help',{body:'Alex pressed the help button',requireInteraction:true})}
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 
-  synth.speak(utter);
-  state.lastSpokenPhrase = text;
-  showLastSpoken(text);
+// === BOARDS ===
+function homeBoard(){
+  const b=$('hb');b.innerHTML='';b.classList.remove('hid');$('sb').classList.add('hid');$('cv').classList.remove('act');S.view='home';
+  CFG.home.forEach(t=>b.appendChild(mkTile(t)));
 }
 
-// ============================================================
-// BOARD RENDERING
-// ============================================================
-function renderHomeBoard() {
-  const board = document.getElementById('homeBoard');
-  board.innerHTML = '';
-  board.classList.remove('hidden');
-  document.getElementById('subBoard').classList.add('hidden');
-  document.getElementById('composeView').classList.remove('active');
-  state.currentView = 'home';
-
-  CONFIG.home.forEach(tile => {
-    const el = createTileElement(tile);
-    board.appendChild(el);
-  });
+function subBoard(cid){
+  const c=CFG.cats[cid];if(!c)return;
+  $('hb').classList.add('hid');$('cv').classList.remove('act');
+  const s=$('sb');s.classList.remove('hid');s.innerHTML='';S.view='cat';
+  const h=document.createElement('div');h.className='shdr';
+  h.innerHTML='<button class="bb" id="sbk">← Back</button><span class="st">'+c.title+'</span>';
+  s.appendChild(h);h.querySelector('#sbk').addEventListener('click',homeBoard);
+  c.tiles.forEach(t=>s.appendChild(mkTile({...t,type:t.urgent?'urgent':'phrase'})));
 }
 
-function renderSubBoard(categoryId) {
-  const cat = CONFIG.categories[categoryId];
-  if (!cat) return;
-
-  const home = document.getElementById('homeBoard');
-  const sub = document.getElementById('subBoard');
-  home.classList.add('hidden');
-  document.getElementById('composeView').classList.remove('active');
-  sub.classList.remove('hidden');
-  sub.innerHTML = '';
-  state.currentView = 'category';
-  state.currentCategory = categoryId;
-
-  // Back button row
-  const header = document.createElement('div');
-  header.className = 'sub-header';
-  header.innerHTML = `
-    <button class="btn-back" id="subBackBtn">← Back</button>
-    <span class="sub-title">${cat.title}</span>
-  `;
-  sub.appendChild(header);
-  header.querySelector('#subBackBtn').addEventListener('click', renderHomeBoard);
-
-  cat.tiles.forEach(tile => {
-    const el = createTileElement({ ...tile, type: tile.urgent ? 'urgent' : 'phrase' });
-    sub.appendChild(el);
-  });
+function mkTile(t){
+  const e=document.createElement('div');e.className='tile '+(t.type||'');
+  e.innerHTML='<span class="tile-i">'+(t.icon||'')+'</span><span class="tile-l">'+t.label+'</span>';
+  e.addEventListener('click',()=>{
+    if(t.type==='category')subBoard(t.id);
+    else if(t.action==='compose')showComp();
+    else if(t.phrase){speak(t.phrase,t.alert||t.urgent,e);if(t.alert)alert_()}
+  });return e;
 }
 
-function createTileElement(tile) {
-  const el = document.createElement('div');
-  el.className = `tile ${tile.type || ''}`;
-  el.innerHTML = `
-    <span class="tile-icon">${tile.icon || ''}</span>
-    <span class="tile-label">${tile.label}</span>
-  `;
+// === COMPOSE ===
+function showComp(){$('hb').classList.add('hid');$('sb').classList.add('hid');$('cv').classList.add('act');S.view='compose';S.txt='';updComp();mkQP();mkKB()}
+function updComp(){$('ctxt').textContent=S.txt}
+function mkQP(){const c=$('qp');c.innerHTML='';CFG.qp.forEach(p=>{const b=document.createElement('button');b.className='qpb';b.textContent=p;b.addEventListener('click',()=>{S.txt+=(S.txt&&!S.txt.endsWith(' ')?' ':'')+p+' ';updComp()});c.appendChild(b)})}
+function mkKB(){const c=$('kb');c.innerHTML='';[['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L',"'"],['Z','X','C','V',' ','B','N','M','.',',']].forEach(r=>r.forEach(k=>{const b=document.createElement('button');b.className='k'+(k===' '?' spc':'');b.textContent=k===' '?'SPACE':k;b.addEventListener('click',()=>{S.txt+=k===' '?' ':k;updComp()});c.appendChild(b)}))}
 
-  el.addEventListener('click', () => {
-    if (tile.type === 'category') {
-      renderSubBoard(tile.id);
-    } else if (tile.action === 'compose') {
-      showCompose();
-    } else if (tile.phrase) {
-      speak(tile.phrase, tile.alert || tile.urgent);
-      if (tile.alert) {
-        triggerAlert();
-      }
-    }
-  });
+$('cBk').addEventListener('click',homeBoard);
+$('cCl').addEventListener('click',()=>{S.txt='';updComp()});
+$('cBs').addEventListener('click',()=>{S.txt=S.txt.slice(0,-1);updComp()});
+$('cSp').addEventListener('click',()=>{if(S.txt.trim())speak(S.txt.trim())});
 
-  return el;
-}
+// === REPEAT ===
+$('bRpt').addEventListener('click',()=>{if(S.last)speak(S.last,S.lastU)});
+$('bRptB').addEventListener('click',()=>{if(S.last)speak(S.last,S.lastU)});
 
-// ============================================================
-// COMPOSE VIEW
-// ============================================================
-function showCompose() {
-  document.getElementById('homeBoard').classList.add('hidden');
-  document.getElementById('subBoard').classList.add('hidden');
-  document.getElementById('composeView').classList.add('active');
-  state.currentView = 'compose';
-  state.composeText = '';
-  updateComposeDisplay();
-  renderQuickPhrases();
-  renderKeyboard();
-}
+// === SETTINGS ===
+$('bSet').addEventListener('click',()=>$('sOv').classList.add('act'));
+$('sX').addEventListener('click',()=>$('sOv').classList.remove('act'));
+$('sOv').addEventListener('click',e=>{if(e.target.id==='sOv')$('sOv').classList.remove('act')});
+$('rs').addEventListener('input',e=>{$('rv').textContent=e.target.value;sv('rate',e.target.value)});
 
-function updateComposeDisplay() {
-  document.getElementById('composeText').textContent = state.composeText;
-}
+// === VOICE PICKER ===
+$('oVP').addEventListener('click',()=>{$('sOv').classList.remove('act');$('vOv').classList.add('act');mkVP()});
+$('vX').addEventListener('click',()=>$('vOv').classList.remove('act'));
+$('vOv').addEventListener('click',e=>{if(e.target.id==='vOv')$('vOv').classList.remove('act')});
 
-function renderQuickPhrases() {
-  const container = document.getElementById('quickPhrases');
-  container.innerHTML = '';
-  CONFIG.quickPhrases.forEach(phrase => {
-    const btn = document.createElement('button');
-    btn.className = 'quick-phrase';
-    btn.textContent = phrase;
-    btn.addEventListener('click', () => {
-      state.composeText += (state.composeText && !state.composeText.endsWith(' ') ? ' ' : '') + phrase + ' ';
-      updateComposeDisplay();
+function mkVP(){
+  const g=$('vg');g.innerHTML='';
+  const saved=ld('voice')||EL.voices[0].id;
+  EL.voices.forEach(v=>{
+    const c=document.createElement('div');c.className='vc'+(v.id===saved?' sel':'');
+    c.innerHTML='<div class="vc-n">'+v.name+'</div><div class="vc-d">'+v.desc+'</div><button class="vc-p" data-id="'+v.id+'">▶ Preview</button>';
+    c.addEventListener('click',e=>{
+      if(e.target.classList.contains('vc-p'))return;
+      document.querySelectorAll('.vc').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');
+      S.voice=v.id;sv('voice',v.id);$('cvn').textContent=v.name;
+      $('vst').textContent='Selected: '+v.name;$('vst').className='vs ok';
     });
-    container.appendChild(btn);
-  });
-}
-
-function renderKeyboard() {
-  const container = document.getElementById('composeKeyboard');
-  container.innerHTML = '';
-
-  const rows = [
-    ['Q','W','E','R','T','Y','U','I','O','P'],
-    ['A','S','D','F','G','H','J','K','L','\''],
-    ['Z','X','C','V',' ','B','N','M','.',','],
-  ];
-
-  rows.forEach(row => {
-    row.forEach(key => {
-      const btn = document.createElement('button');
-      btn.className = 'key' + (key === ' ' ? ' space' : '');
-      btn.textContent = key === ' ' ? 'SPACE' : key;
-      btn.addEventListener('click', () => {
-        state.composeText += key === ' ' ? ' ' : key;
-        updateComposeDisplay();
-      });
-      container.appendChild(btn);
+    c.querySelector('.vc-p').addEventListener('click',async e=>{
+      e.stopPropagation();const btn=e.target;if(btn.classList.contains('ld'))return;
+      btn.classList.add('ld');btn.textContent='⏳ Loading...';
+      const old=S.voice;S.voice=v.id;
+      const ok=await elSpeak(EL.sample);
+      S.voice=old;btn.classList.remove('ld');btn.textContent='▶ Preview';
+      if(!ok){$('vst').textContent='Preview failed — check connection';$('vst').className='vs err'}
     });
+    g.appendChild(c);
   });
+  const cur=EL.voices.find(v=>v.id===saved);if(cur)$('cvn').textContent=cur.name;
 }
 
-// Compose action buttons
-document.getElementById('composeBack').addEventListener('click', renderHomeBoard);
-document.getElementById('composeClear').addEventListener('click', () => {
-  state.composeText = '';
-  updateComposeDisplay();
-});
-document.getElementById('composeBackspace').addEventListener('click', () => {
-  state.composeText = state.composeText.slice(0, -1);
-  updateComposeDisplay();
-});
-document.getElementById('composeSpeak').addEventListener('click', () => {
-  if (state.composeText.trim()) {
-    speak(state.composeText.trim());
-  }
-});
-
-// ============================================================
-// LAST SPOKEN / REPEAT
-// ============================================================
-let lastSpokenTimeout;
-
-function showLastSpoken(text) {
-  const el = document.getElementById('lastSpoken');
-  document.getElementById('lastSpokenText').textContent = text;
-  el.classList.add('visible');
-  clearTimeout(lastSpokenTimeout);
-  lastSpokenTimeout = setTimeout(() => {
-    el.classList.remove('visible');
-  }, 6000);
+// === INIT ===
+async function init(){
+  const rate=ld('rate'),voice=ld('voice');
+  if(rate){$('rs').value=rate;$('rv').textContent=rate}
+  if(voice){S.voice=voice;const v=EL.voices.find(x=>x.id===voice);if(v)$('cvn').textContent=v.name}
+  else{S.voice=EL.voices[0].id;$('cvn').textContent=EL.voices[0].name}
+  homeBoard();
+  const ok=await testEL();
+  if(ok)setTimeout(preCache,1000);
+  if(window.speechSynthesis){speechSynthesis.getVoices();if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
 }
-
-document.getElementById('btnRepeatLast').addEventListener('click', () => {
-  if (state.lastSpokenPhrase) speak(state.lastSpokenPhrase);
-});
-document.getElementById('btnRepeatBanner').addEventListener('click', () => {
-  if (state.lastSpokenPhrase) speak(state.lastSpokenPhrase);
-});
-
-// ============================================================
-// VOLUME QUICK BUTTON
-// ============================================================
-document.getElementById('btnVolumeUp').addEventListener('click', () => {
-  const current = parseFloat(loadSetting('volume') || 1);
-  const next = current >= 1 ? 0.5 : 1.0;
-  saveSetting('volume', next);
-  document.getElementById('volumeSlider').value = next;
-  document.getElementById('volumeValue').textContent = Math.round(next * 100) + '%';
-  speak(next >= 1 ? 'Volume full' : 'Volume reduced');
-});
-
-// ============================================================
-// ALERT SYSTEM
-// ============================================================
-function triggerAlert() {
-  const flash = document.getElementById('alertFlash');
-  flash.classList.add('active');
-  setTimeout(() => flash.classList.remove('active'), 2000);
-  // If Notification API is available, send a push
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Big Al — Alex Needs Help', {
-      body: 'Alex pressed the emergency button',
-      icon: '🚨',
-      requireInteraction: true,
-    });
-  }
-}
-
-// Request notification permission on first load
-if ('Notification' in window && Notification.permission === 'default') {
-  // We'll request on first urgent press instead of on load
-  const origTrigger = triggerAlert;
-  // Actually let's just try on load — iPad may not support this well
-  // but it doesn't hurt to try
-  Notification.requestPermission();
-}
-
-// ============================================================
-// SETTINGS
-// ============================================================
-document.getElementById('btnSettings').addEventListener('click', () => {
-  document.getElementById('settingsOverlay').classList.add('active');
-});
-document.getElementById('settingsClose').addEventListener('click', () => {
-  document.getElementById('settingsOverlay').classList.remove('active');
-});
-document.getElementById('settingsOverlay').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('settingsOverlay')) {
-    document.getElementById('settingsOverlay').classList.remove('active');
-  }
-});
-
-// Voice select
-function populateVoiceSelect() {
-  const sel = document.getElementById('voiceSelect');
-  sel.innerHTML = '';
-  const englishVoices = voices.filter(v => v.lang.startsWith('en'));
-  englishVoices.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = v.voiceURI;
-    opt.textContent = v.name.replace('com.apple.', '').replace('speech.synthesis.voice.', '');
-    sel.appendChild(opt);
-  });
-}
-
-document.getElementById('voiceSelect').addEventListener('change', (e) => {
-  selectedVoice = voices.find(v => v.voiceURI === e.target.value);
-  saveSetting('voiceURI', e.target.value);
-  speak('This is how I sound');
-});
-
-document.getElementById('rateSlider').addEventListener('input', (e) => {
-  document.getElementById('rateValue').textContent = e.target.value;
-  saveSetting('rate', e.target.value);
-});
-document.getElementById('rateSlider').addEventListener('change', () => {
-  speak('Testing speech speed');
-});
-
-document.getElementById('pitchSlider').addEventListener('input', (e) => {
-  document.getElementById('pitchValue').textContent = e.target.value;
-  saveSetting('pitch', e.target.value);
-});
-document.getElementById('pitchSlider').addEventListener('change', () => {
-  speak('Testing voice pitch');
-});
-
-document.getElementById('volumeSlider').addEventListener('input', (e) => {
-  document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
-  saveSetting('volume', e.target.value);
-});
-
-// ============================================================
-// LOCAL STORAGE HELPERS
-// ============================================================
-function saveSetting(key, value) {
-  try { localStorage.setItem('bigal_' + key, JSON.stringify(value)); } catch(e) {}
-}
-
-function loadSetting(key) {
-  try {
-    const v = localStorage.getItem('bigal_' + key);
-    return v ? JSON.parse(v) : null;
-  } catch(e) { return null; }
-}
-
-function restoreSettings() {
-  const rate = loadSetting('rate');
-  const pitch = loadSetting('pitch');
-  const vol = loadSetting('volume');
-  if (rate) { document.getElementById('rateSlider').value = rate; document.getElementById('rateValue').textContent = rate; }
-  if (pitch) { document.getElementById('pitchSlider').value = pitch; document.getElementById('pitchValue').textContent = pitch; }
-  if (vol) { document.getElementById('volumeSlider').value = vol; document.getElementById('volumeValue').textContent = Math.round(vol * 100) + '%'; }
-}
-
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  // Load voices
-  if (synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = loadVoices;
-  }
-  loadVoices();
-  restoreSettings();
-  renderHomeBoard();
-}
-
 init();
 </script>
 </body>

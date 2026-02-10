@@ -250,17 +250,25 @@ function fallback(text,urg){
   sy.speak(u);
 }
 
+function setEngineStatus(ok){
+  S.elOk=ok;
+  $('es').textContent=ok?'ElevenLabs connected ✓':'Offline - using device voice';
+  $('ei').textContent=ok?'🟢':'🟡';
+}
+
 async function speak(text,urg,el){
   if(!text)return;
   if(el){el.classList.add('spk');setTimeout(()=>el.classList.remove('spk'),800)}
   S.last=text;S.lastU=urg||false;showLS(text);
-  if(S.elOk){if(!await elSpeak(text,urg))fallback(text,urg)}else fallback(text,urg);
+  const ok=await elSpeak(text,urg);
+  if(ok){if(!S.elOk)setEngineStatus(true)}
+  else{if(S.elOk)setEngineStatus(false);fallback(text,urg)}
 }
 
 async function testEL(){
   try{const r=await fetch(EL.url+'/voices',{headers:{'xi-api-key':EL.key}});
-    if(r.ok){S.elOk=true;$('es').textContent='ElevenLabs connected ✓';$('ei').textContent='🟢';return true}}catch(e){}
-  S.elOk=false;$('es').textContent='Offline — using device voice';$('ei').textContent='🟡';return false;
+    if(r.ok){setEngineStatus(true);return true}}catch(e){}
+  setEngineStatus(false);return false;
 }
 
 async function preCache(){
@@ -358,7 +366,8 @@ function mkVP(){
       const old=S.voice;S.voice=v.id;
       const ok=await elSpeak(EL.sample);
       S.voice=old;btn.classList.remove('ld');btn.textContent='▶ Preview';
-      if(!ok){$('vst').textContent='Preview failed — check connection';$('vst').className='vs err'}
+      if(ok){setEngineStatus(true);$('vst').textContent='Preview ready';$('vst').className='vs ok'}
+      else{setEngineStatus(false);$('vst').textContent='Preview failed — check connection';$('vst').className='vs err'}
     });
     g.appendChild(c);
   });

@@ -294,12 +294,27 @@ async function speak(text, urg, el) {
   if (!text) return;
   if (el) { el.classList.add('spk'); setTimeout(() => el.classList.remove('spk'), 800); }
   S.last = text; S.lastU = urg || false; showLS(text);
-  if (S.elOk) { if (!await elSpeak(text, urg)) fallback(text, urg); } else fallback(text, urg);
+  const ok = await elSpeak(text, urg);
+  if (ok) {
+    if (!S.elOk) {
+      S.elOk = true;
+      $('es').textContent = 'ElevenLabs connected ✓';
+      $('ei').textContent = '🟢';
+    }
+  } else {
+    fallback(text, urg);
+  }
 }
 
 async function testEL() {
   try {
-    const r = await fetch(EL.url + '/voices', { headers: { 'xi-api-key': EL.key } });
+    // Some API keys can synthesize speech but do not have voices_read permission.
+    // Health check with a tiny TTS request avoids false "offline" state.
+    const r = await fetch(EL.url + '/text-to-speech/' + (S.voice || EL.voices[0].id), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+      body: JSON.stringify({ text: 'ok', model_id: EL.model, voice_settings: getVoiceConfig(S.voice || EL.voices[0].id) })
+    });
     if (r.ok) { S.elOk = true; $('es').textContent = 'ElevenLabs connected ✓'; $('ei').textContent = '🟢'; return true; }
   } catch (e) {}
   S.elOk = false; $('es').textContent = 'Offline — using device voice'; $('ei').textContent = '🟡'; return false;

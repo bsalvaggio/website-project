@@ -94,6 +94,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;heigh
 .vc-p{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;color:var(--gold);cursor:pointer}
 .vc-p:active{background:var(--tile-h)}
 .vc-p.ld{opacity:.5;pointer-events:none}
+.vc.alex{border-color:rgba(240,168,48,.3);background:rgba(240,168,48,.04)}
+.vc.alex .vc-n::after{content:' ⭐';font-size:14px}
 .vs{text-align:center;padding:12px;font-size:13px;color:var(--t3)}
 .vs.err{color:var(--red)}.vs.ok{color:var(--green)}
 @media(max-height:600px){.tile-i{font-size:26px}.tile-l{font-size:14px}.hdr{padding:6px 16px}.tile{padding:8px 6px;gap:3px}}
@@ -123,267 +125,311 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;heigh
   </div>
 </main>
 <div class="ls" id="ls"><span class="ls-i">🔊</span><span id="lst"></span><button class="rpt" id="bRptB">Repeat</button></div>
+
+<!-- SETTINGS -->
 <div class="ov" id="sOv">
   <div class="pn">
     <div class="pn-t">Settings<button class="pn-x" id="sX">✕</button></div>
-    <div class="sr" style="cursor:pointer" id="oVP"><div><div class="sl">Voice</div><div class="sd" id="cvn">Loading...</div></div><div class="sc" style="color:var(--gold);font-size:20px">›</div></div>
+    <div class="sr" style="cursor:pointer" id="oVP"><div><div class="sl">Voice</div><div class="sd" id="cvn">Alex's Voice</div></div><div class="sc" style="color:var(--gold);font-size:20px">›</div></div>
     <div class="sr"><div><div class="sl">Speech Speed</div><div class="sd">Slower is clearer for speeches</div></div><div class="sc"><span id="rv">0.9</span><input type="range" id="rs" min="0.5" max="1.3" step="0.1" value="0.9"></div></div>
     <div class="sr"><div><div class="sl">Voice Engine</div><div class="sd" id="es">Checking...</div></div><div class="sc"><span id="ei" style="font-size:24px">⏳</span></div></div>
-    <div class="sr" style="border:none;padding-top:16px"><div><div class="sl" style="color:var(--t3)">Big Al v2.0</div><div class="sd">Made with love for Alex 💛</div></div></div>
+    <div class="sr" style="border:none;padding-top:16px"><div><div class="sl" style="color:var(--t3)">Big Al v2.1</div><div class="sd">Made with love for Alex 💛</div></div></div>
   </div>
 </div>
+
+<!-- VOICE PICKER -->
 <div class="ov" id="vOv">
   <div class="pn" style="width:620px">
     <div class="pn-t">Choose Alex's Voice<button class="pn-x" id="vX">✕</button></div>
-    <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.5">Tap <strong>Preview</strong> to hear each voice. Pick the one that feels right for Alex.</p>
+    <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.5">Tap <strong>Preview</strong> to hear each voice. <strong>Alex's Voice</strong> is cloned from a real recording.</p>
     <div class="vg" id="vg"></div>
     <div class="vs" id="vst"></div>
   </div>
 </div>
+
 <script>
-const EL={key:'sk_b3086414e988852c15b01fe6bc500fa44590661531ba4c1d',url:'https://api.elevenlabs.io/v1',voices:[
-{id:'pNInz6obpgDQGcFmaJgB',name:'Adam',desc:'Deep, warm, clear. Great for conversation and speeches.'},
-{id:'Cz0K1kOv9tD8l0b5Qu53',name:'Jon',desc:"Relaxed, Deep and Approachable BEST ONE SO FAR"},
-{id:'TxGEqnHWrfWFTfGW9XjX',name:'Josh',desc:'Conversational, friendly, natural cadence.'},
-{id:'ErXwobaYiN019PkySvjV',name:'Antoni',desc:'Warm, well-paced, articulate.'},
-{id:'VR6AewLTigWG4xSOukaG',name:'Arnold',desc:'Strong, confident, deeper register.'},
-{id:'ODq5zmih8GrVes37Dizd',name:'Patrick',desc:'Calm, steady, mature tone.'},
-{id:'ZQe5CZNOzWyzPSCn5a3c',name:'James',desc:'Authoritative, clear, composed.'}
-],model:'eleven_multilingual_v2',sample:"Hey, how's it going? I'm doing great today."};
+// ============================================================
+// BIG AL v2.1 — Alex's Cloned Voice
+// ============================================================
 
-const cache=new Map();let curAudio=null;
-const S={view:'home',cat:null,txt:'',last:'',lastU:false,speaking:false,voice:null,elOk:false};
+const EL = {
+  key: 'sk_b3086414e988852c15b01fe6bc500fa44590661531ba4c1d',
+  url: 'https://api.elevenlabs.io/v1',
+  // Alex's cloned voice is FIRST and DEFAULT
+  voices: [
+    { id: 'f6SL2KwYsFp3vnBZicBb', name: "Alex's Voice", desc: "Cloned from Alex's own voice. This is him.", isAlex: true,
+      // Optimized settings for instant voice clone from noisy bar audio
+      settings: { stability: 0.45, similarity_boost: 0.65, style: 0.25, use_speaker_boost: true } },
+    { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', desc: 'Deep, warm, clear. Great for conversation and speeches.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', desc: 'Conversational, friendly, natural cadence.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', desc: 'Warm, well-paced, articulate.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', desc: 'Strong, confident, deeper register.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'ODq5zmih8GrVes37Dizd', name: 'Patrick', desc: 'Calm, steady, mature tone.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+  ],
+  model: 'eleven_multilingual_v2',
+  sample: "Hey, how's it going? I'm doing great today."
+};
 
-const CFG={home:[
-{id:'urgent',label:'I Need Help',icon:'🚨',type:'urgent',phrase:'I need help right now',alert:true},
-{id:'needs',label:'My Needs',icon:'🙋',type:'category'},
-{id:'feelings',label:'How I Feel',icon:'💭',type:'category'},
-{id:'social',label:'Social',icon:'💬',type:'category'},
-{id:'yes',label:'Yes',icon:'✅',type:'confirm-yes',phrase:'Yes'},
-{id:'no',label:'No',icon:'❌',type:'phrase',phrase:'No'},
-{id:'thanks',label:'Thank You',icon:'🙏',phrase:'Thank you'},
-{id:'repeat',label:'Say Again?',icon:'🔄',phrase:'Can you say that again please?'},
-{id:'compose',label:'Type It Out',icon:'⌨️',type:'action',action:'compose'},
-{id:'wait',label:'Hold On',icon:'✋',phrase:'Hold on, give me a moment'},
-{id:'tv',label:'TV / Music',icon:'📺',type:'category'},
-{id:'mom',label:'Call Mom',icon:'📞',phrase:'Can someone call Mom for me?'}
-],cats:{
-needs:{title:'My Needs',tiles:[
-{label:'I Want to Stand',icon:'🧍',phrase:'I want to stand up please'},
-{label:'Standing Frame',icon:'🏋️',phrase:'I want to use my standing frame'},
-{label:'Bathroom',icon:'🚻',phrase:'I need to go to the bathroom'},
-{label:'Suction',icon:'💨',phrase:'I need the suction machine'},
-{label:'Eye Drops',icon:'💧',phrase:'I need my drops'},
-{label:'Water',icon:'🥤',phrase:'Can I have something to drink?'},
-{label:'Food',icon:'🍽️',phrase:"I'm hungry"},
-{label:'Too Hot',icon:'🥵',phrase:"I'm too hot, can you adjust the temperature?"},
-{label:'Too Cold',icon:'🥶',phrase:"I'm too cold"},
-{label:'Reposition',icon:'🔄',phrase:'Can you help reposition me?'},
-{label:'Blanket',icon:'🛏️',phrase:'Can I have a blanket?'},
-{label:'Medication',icon:'💊',phrase:'I need my medication'}
-]},
-feelings:{title:'How I Feel',tiles:[
-{label:"I'm Good",icon:'😊',phrase:"I'm doing good"},
-{label:"I'm Tired",icon:'😴',phrase:"I'm feeling tired"},
-{label:'In Pain',icon:'😣',phrase:"I'm in pain",urgent:true},
-{label:'Frustrated',icon:'😤',phrase:"I'm feeling frustrated"},
-{label:'Bored',icon:'😐',phrase:"I'm bored"},
-{label:'Happy',icon:'😄',phrase:"I'm feeling happy"},
-{label:'Anxious',icon:'😰',phrase:"I'm feeling anxious"},
-{label:'Love You',icon:'❤️',phrase:'I love you'}
-]},
-social:{title:'Social',tiles:[
-{label:'Hey!',icon:'👋',phrase:"Hey, how's it going?"},
-{label:"That's Funny",icon:'😂',phrase:"Ha ha, that's funny"},
-{label:'Good Morning',icon:'🌅',phrase:'Good morning'},
-{label:'Good Night',icon:'🌙',phrase:'Good night, sleep well'},
-{label:'Miss You',icon:'💙',phrase:'I miss you'},
-{label:"What's New?",icon:'📰',phrase:"What's new with you?"},
-{label:'Tell Me More',icon:'👂',phrase:'Tell me more about that'},
-{label:'Nice!',icon:'👍',phrase:"That's awesome!"}
-]},
-tv:{title:'TV / Music',tiles:[
-{label:'Turn On TV',icon:'📺',phrase:'Can you turn on the TV?'},
-{label:'Change Channel',icon:'🔄',phrase:'Can you change the channel?'},
-{label:'Volume Up',icon:'🔊',phrase:'Can you turn it up?'},
-{label:'Volume Down',icon:'🔉',phrase:'Can you turn it down?'},
-{label:'Play Music',icon:'🎵',phrase:'Can you put some music on?'},
-{label:'Turn It Off',icon:'⏹️',phrase:'Can you turn that off?'}
-]}},
-qp:['I want to','Can you','Please','Tell','I need','Thank you','Where is','When']};
+const cache = new Map();
+let curAudio = null;
+const S = { view: 'home', cat: null, txt: '', last: '', lastU: false, speaking: false, voice: null, elOk: false };
 
-// === SPEECH ENGINE ===
-async function elSpeak(text,urg){
-  const vid=S.voice||EL.voices[0].id, ck=vid+':'+text;
-  if(cache.has(ck)){play(cache.get(ck),urg);return true}
-  try{
-    const r=await fetch(EL.url+'/text-to-speech/'+vid,{method:'POST',
-      headers:{'Content-Type':'application/json','xi-api-key':EL.key},
-      body:JSON.stringify({text,model_id:EL.model,voice_settings:{stability:.5,similarity_boost:.75,style:.3,use_speaker_boost:true}})});
-    if(!r.ok)return false;
-    const b=await r.blob(),u=URL.createObjectURL(b);
-    cache.set(ck,u);
-    if(cache.size>60){const o=cache.keys().next().value;URL.revokeObjectURL(cache.get(o));cache.delete(o)}
-    play(u,urg);return true;
-  }catch(e){return false}
+// BOARD CONFIG — placeholders until mom's list arrives
+const CFG = { home: [
+  { id: 'urgent', label: 'I Need Help', icon: '🚨', type: 'urgent', phrase: 'I need help right now', alert: true },
+  { id: 'needs', label: 'My Needs', icon: '🙋', type: 'category' },
+  { id: 'feelings', label: 'How I Feel', icon: '💭', type: 'category' },
+  { id: 'social', label: 'Social', icon: '💬', type: 'category' },
+  { id: 'yes', label: 'Yes', icon: '✅', type: 'confirm-yes', phrase: 'Yes' },
+  { id: 'no', label: 'No', icon: '❌', type: 'phrase', phrase: 'No' },
+  { id: 'thanks', label: 'Thank You', icon: '🙏', phrase: 'Thank you' },
+  { id: 'repeat', label: 'Say Again?', icon: '🔄', phrase: 'Can you say that again please?' },
+  { id: 'compose', label: 'Type It Out', icon: '⌨️', type: 'action', action: 'compose' },
+  { id: 'wait', label: 'Hold On', icon: '✋', phrase: 'Hold on, give me a moment' },
+  { id: 'tv', label: 'TV / Music', icon: '📺', type: 'category' },
+  { id: 'mom', label: 'Call Mom', icon: '📞', phrase: 'Can someone call Mom for me?' }
+], cats: {
+  needs: { title: 'My Needs', tiles: [
+    { label: 'I Want to Stand', icon: '🧍', phrase: 'I want to stand up please' },
+    { label: 'Standing Frame', icon: '🏋️', phrase: 'I want to use my standing frame' },
+    { label: 'Bathroom', icon: '🚻', phrase: 'I need to go to the bathroom' },
+    { label: 'Suction', icon: '💨', phrase: 'I need the suction machine' },
+    { label: 'Eye Drops', icon: '💧', phrase: 'I need my drops' },
+    { label: 'Water', icon: '🥤', phrase: 'Can I have something to drink?' },
+    { label: 'Food', icon: '🍽️', phrase: "I'm hungry" },
+    { label: 'Too Hot', icon: '🥵', phrase: "I'm too hot, can you adjust the temperature?" },
+    { label: 'Too Cold', icon: '🥶', phrase: "I'm too cold" },
+    { label: 'Reposition', icon: '🔄', phrase: 'Can you help reposition me?' },
+    { label: 'Blanket', icon: '🛏️', phrase: 'Can I have a blanket?' },
+    { label: 'Medication', icon: '💊', phrase: 'I need my medication' }
+  ]},
+  feelings: { title: 'How I Feel', tiles: [
+    { label: "I'm Good", icon: '😊', phrase: "I'm doing good" },
+    { label: "I'm Tired", icon: '😴', phrase: "I'm feeling tired" },
+    { label: 'In Pain', icon: '😣', phrase: "I'm in pain", urgent: true },
+    { label: 'Frustrated', icon: '😤', phrase: "I'm feeling frustrated" },
+    { label: 'Bored', icon: '😐', phrase: "I'm bored" },
+    { label: 'Happy', icon: '😄', phrase: "I'm feeling happy" },
+    { label: 'Anxious', icon: '😰', phrase: "I'm feeling anxious" },
+    { label: 'Love You', icon: '❤️', phrase: 'I love you' }
+  ]},
+  social: { title: 'Social', tiles: [
+    { label: 'Hey!', icon: '👋', phrase: "Hey, how's it going?" },
+    { label: "That's Funny", icon: '😂', phrase: "Ha ha, that's funny" },
+    { label: 'Good Morning', icon: '🌅', phrase: 'Good morning' },
+    { label: 'Good Night', icon: '🌙', phrase: 'Good night, sleep well' },
+    { label: 'Miss You', icon: '💙', phrase: 'I miss you' },
+    { label: "What's New?", icon: '📰', phrase: "What's new with you?" },
+    { label: 'Tell Me More', icon: '👂', phrase: 'Tell me more about that' },
+    { label: 'Nice!', icon: '👍', phrase: "That's awesome!" }
+  ]},
+  tv: { title: 'TV / Music', tiles: [
+    { label: 'Turn On TV', icon: '📺', phrase: 'Can you turn on the TV?' },
+    { label: 'Change Channel', icon: '🔄', phrase: 'Can you change the channel?' },
+    { label: 'Volume Up', icon: '🔊', phrase: 'Can you turn it up?' },
+    { label: 'Volume Down', icon: '🔉', phrase: 'Can you turn it down?' },
+    { label: 'Play Music', icon: '🎵', phrase: 'Can you put some music on?' },
+    { label: 'Turn It Off', icon: '⏹️', phrase: 'Can you turn that off?' }
+  ]}
+}, qp: ['I want to', 'Can you', 'Please', 'Tell', 'I need', 'Thank you', 'Where is', 'When'] };
+
+// ============================================================
+// SPEECH ENGINE
+// ============================================================
+function getVoiceConfig(vid) {
+  const v = EL.voices.find(x => x.id === vid);
+  return v ? v.settings : { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true };
 }
 
-function play(u,urg){
-  if(curAudio){curAudio.pause();curAudio=null}
-  const a=new Audio(u);
-  a.volume=urg?1:parseFloat(ld('vol')||1);
-  a.playbackRate=parseFloat(ld('rate')||.9);
-  curAudio=a;
-  a.onplay=()=>{S.speaking=true;$('sbar').classList.add('act')};
-  a.onended=a.onerror=()=>{S.speaking=false;$('sbar').classList.remove('act');curAudio=null};
-  a.play().catch(()=>{S.speaking=false;$('sbar').classList.remove('act')});
+async function elSpeak(text, urg) {
+  const vid = S.voice || EL.voices[0].id;
+  const ck = vid + ':' + text;
+  if (cache.has(ck)) { play(cache.get(ck), urg); return true; }
+  try {
+    const settings = getVoiceConfig(vid);
+    const r = await fetch(EL.url + '/text-to-speech/' + vid, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+      body: JSON.stringify({ text, model_id: EL.model, voice_settings: settings })
+    });
+    if (!r.ok) return false;
+    const b = await r.blob(), u = URL.createObjectURL(b);
+    cache.set(ck, u);
+    if (cache.size > 60) { const o = cache.keys().next().value; URL.revokeObjectURL(cache.get(o)); cache.delete(o); }
+    play(u, urg); return true;
+  } catch (e) { return false; }
 }
 
-function fallback(text,urg){
-  const sy=speechSynthesis;sy.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=parseFloat(ld('rate')||.9);u.volume=urg?1:parseFloat(ld('vol')||1);
-  const v=sy.getVoices(),p=v.find(x=>x.lang.startsWith('en')&&x.name.toLowerCase().includes('daniel'))||v.find(x=>x.lang.startsWith('en')&&(x.name.includes('Enhanced')||x.name.includes('Premium')))||v.find(x=>x.lang.startsWith('en-US'));
-  if(p)u.voice=p;
-  u.onstart=()=>{S.speaking=true;$('sbar').classList.add('act')};
-  u.onend=()=>{S.speaking=false;$('sbar').classList.remove('act')};
+function play(u, urg) {
+  if (curAudio) { curAudio.pause(); curAudio = null; }
+  const a = new Audio(u);
+  a.volume = urg ? 1 : parseFloat(ld('vol') || 1);
+  a.playbackRate = parseFloat(ld('rate') || 0.9);
+  curAudio = a;
+  a.onplay = () => { S.speaking = true; $('sbar').classList.add('act'); };
+  a.onended = a.onerror = () => { S.speaking = false; $('sbar').classList.remove('act'); curAudio = null; };
+  a.play().catch(() => { S.speaking = false; $('sbar').classList.remove('act'); });
+}
+
+function fallback(text, urg) {
+  const sy = speechSynthesis; sy.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = parseFloat(ld('rate') || 0.9); u.volume = urg ? 1 : parseFloat(ld('vol') || 1);
+  const v = sy.getVoices();
+  const p = v.find(x => x.lang.startsWith('en') && x.name.toLowerCase().includes('daniel'))
+    || v.find(x => x.lang.startsWith('en') && (x.name.includes('Enhanced') || x.name.includes('Premium')))
+    || v.find(x => x.lang.startsWith('en-US'));
+  if (p) u.voice = p;
+  u.onstart = () => { S.speaking = true; $('sbar').classList.add('act'); };
+  u.onend = () => { S.speaking = false; $('sbar').classList.remove('act'); };
   sy.speak(u);
 }
 
-function setEngineStatus(ok){
-  S.elOk=ok;
-  $('es').textContent=ok?'ElevenLabs connected ✓':'Offline - using device voice';
-  $('ei').textContent=ok?'🟢':'🟡';
+async function speak(text, urg, el) {
+  if (!text) return;
+  if (el) { el.classList.add('spk'); setTimeout(() => el.classList.remove('spk'), 800); }
+  S.last = text; S.lastU = urg || false; showLS(text);
+  if (S.elOk) { if (!await elSpeak(text, urg)) fallback(text, urg); } else fallback(text, urg);
 }
 
-async function speak(text,urg,el){
-  if(!text)return;
-  if(el){el.classList.add('spk');setTimeout(()=>el.classList.remove('spk'),800)}
-  S.last=text;S.lastU=urg||false;showLS(text);
-  const ok=await elSpeak(text,urg);
-  if(ok){if(!S.elOk)setEngineStatus(true)}
-  else{if(S.elOk)setEngineStatus(false);fallback(text,urg)}
+async function testEL() {
+  try {
+    const r = await fetch(EL.url + '/voices', { headers: { 'xi-api-key': EL.key } });
+    if (r.ok) { S.elOk = true; $('es').textContent = 'ElevenLabs connected ✓'; $('ei').textContent = '🟢'; return true; }
+  } catch (e) {}
+  S.elOk = false; $('es').textContent = 'Offline — using device voice'; $('ei').textContent = '🟡'; return false;
 }
 
-async function testEL(){
-  try{const r=await fetch(EL.url+'/voices',{headers:{'xi-api-key':EL.key}});
-    if(r.ok){setEngineStatus(true);return true}}catch(e){}
-  setEngineStatus(false);return false;
-}
-
-async function preCache(){
-  if(!S.elOk)return;
-  const phrases=['Yes','No','Thank you','I need help right now','Hold on, give me a moment',"Can you say that again please?","I want to stand up please","I need to go to the bathroom","I need the suction machine","I need my drops"];
-  for(const p of phrases){
-    const vid=S.voice||EL.voices[0].id,ck=vid+':'+p;
-    if(cache.has(ck))continue;
-    try{const r=await fetch(EL.url+'/text-to-speech/'+vid,{method:'POST',headers:{'Content-Type':'application/json','xi-api-key':EL.key},
-      body:JSON.stringify({text:p,model_id:EL.model,voice_settings:{stability:.5,similarity_boost:.75,style:.3,use_speaker_boost:true}})});
-      if(r.ok){const b=await r.blob();cache.set(ck,URL.createObjectURL(b))}}catch(e){}
-    await new Promise(r=>setTimeout(r,400));
+async function preCache() {
+  if (!S.elOk) return;
+  const phrases = ['Yes', 'No', 'Thank you', 'I need help right now', 'Hold on, give me a moment',
+    "Can you say that again please?", "I want to stand up please", "I need to go to the bathroom",
+    "I need the suction machine", "I need my drops", "I love you", "I'm in pain"];
+  for (const p of phrases) {
+    const vid = S.voice || EL.voices[0].id, ck = vid + ':' + p;
+    if (cache.has(ck)) continue;
+    try {
+      const settings = getVoiceConfig(vid);
+      const r = await fetch(EL.url + '/text-to-speech/' + vid, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+        body: JSON.stringify({ text: p, model_id: EL.model, voice_settings: settings })
+      });
+      if (r.ok) { const b = await r.blob(); cache.set(ck, URL.createObjectURL(b)); }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 400));
   }
 }
 
-// === UI HELPERS ===
-function $(id){return document.getElementById(id)}
-function sv(k,v){try{localStorage.setItem('ba_'+k,JSON.stringify(v))}catch(e){}}
-function ld(k){try{const v=localStorage.getItem('ba_'+k);return v?JSON.parse(v):null}catch(e){return null}}
+// ============================================================
+// UI
+// ============================================================
+function $(id) { return document.getElementById(id); }
+function sv(k, v) { try { localStorage.setItem('ba_' + k, JSON.stringify(v)); } catch (e) {} }
+function ld(k) { try { const v = localStorage.getItem('ba_' + k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
 
 let lsT;
-function showLS(t){$('lst').textContent=t;$('ls').classList.add('vis');clearTimeout(lsT);lsT=setTimeout(()=>$('ls').classList.remove('vis'),8000)}
+function showLS(t) { $('lst').textContent = t; $('ls').classList.add('vis'); clearTimeout(lsT); lsT = setTimeout(() => $('ls').classList.remove('vis'), 8000); }
 
-function alert_(){$('af').classList.add('act');setTimeout(()=>$('af').classList.remove('act'),2000);
-  if('Notification'in window&&Notification.permission==='granted')new Notification('Big Al — Alex Needs Help',{body:'Alex pressed the help button',requireInteraction:true})}
-if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+function alert_() {
+  $('af').classList.add('act'); setTimeout(() => $('af').classList.remove('act'), 2000);
+  if ('Notification' in window && Notification.permission === 'granted')
+    new Notification("Big Al — Alex Needs Help", { body: 'Alex pressed the help button', requireInteraction: true });
+}
+if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 
-// === BOARDS ===
-function homeBoard(){
-  const b=$('hb');b.innerHTML='';b.classList.remove('hid');$('sb').classList.add('hid');$('cv').classList.remove('act');S.view='home';
-  CFG.home.forEach(t=>b.appendChild(mkTile(t)));
+// BOARDS
+function homeBoard() {
+  const b = $('hb'); b.innerHTML = ''; b.classList.remove('hid'); $('sb').classList.add('hid'); $('cv').classList.remove('act'); S.view = 'home';
+  CFG.home.forEach(t => b.appendChild(mkTile(t)));
+}
+function subBoard(cid) {
+  const c = CFG.cats[cid]; if (!c) return;
+  $('hb').classList.add('hid'); $('cv').classList.remove('act');
+  const s = $('sb'); s.classList.remove('hid'); s.innerHTML = ''; S.view = 'cat';
+  const h = document.createElement('div'); h.className = 'shdr';
+  h.innerHTML = '<button class="bb" id="sbk">← Back</button><span class="st">' + c.title + '</span>';
+  s.appendChild(h); h.querySelector('#sbk').addEventListener('click', homeBoard);
+  c.tiles.forEach(t => s.appendChild(mkTile({ ...t, type: t.urgent ? 'urgent' : 'phrase' })));
+}
+function mkTile(t) {
+  const e = document.createElement('div'); e.className = 'tile ' + (t.type || '');
+  e.innerHTML = '<span class="tile-i">' + (t.icon || '') + '</span><span class="tile-l">' + t.label + '</span>';
+  e.addEventListener('click', () => {
+    if (t.type === 'category') subBoard(t.id);
+    else if (t.action === 'compose') showComp();
+    else if (t.phrase) { speak(t.phrase, t.alert || t.urgent, e); if (t.alert) alert_(); }
+  }); return e;
 }
 
-function subBoard(cid){
-  const c=CFG.cats[cid];if(!c)return;
-  $('hb').classList.add('hid');$('cv').classList.remove('act');
-  const s=$('sb');s.classList.remove('hid');s.innerHTML='';S.view='cat';
-  const h=document.createElement('div');h.className='shdr';
-  h.innerHTML='<button class="bb" id="sbk">← Back</button><span class="st">'+c.title+'</span>';
-  s.appendChild(h);h.querySelector('#sbk').addEventListener('click',homeBoard);
-  c.tiles.forEach(t=>s.appendChild(mkTile({...t,type:t.urgent?'urgent':'phrase'})));
-}
+// COMPOSE
+function showComp() { $('hb').classList.add('hid'); $('sb').classList.add('hid'); $('cv').classList.add('act'); S.view = 'compose'; S.txt = ''; updComp(); mkQP(); mkKB(); }
+function updComp() { $('ctxt').textContent = S.txt; }
+function mkQP() { const c = $('qp'); c.innerHTML = ''; CFG.qp.forEach(p => { const b = document.createElement('button'); b.className = 'qpb'; b.textContent = p; b.addEventListener('click', () => { S.txt += (S.txt && !S.txt.endsWith(' ') ? ' ' : '') + p + ' '; updComp(); }); c.appendChild(b); }); }
+function mkKB() { const c = $('kb'); c.innerHTML = ''; [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L',"'"],['Z','X','C','V',' ','B','N','M','.',',']].forEach(r => r.forEach(k => { const b = document.createElement('button'); b.className = 'k' + (k === ' ' ? ' spc' : ''); b.textContent = k === ' ' ? 'SPACE' : k; b.addEventListener('click', () => { S.txt += k === ' ' ? ' ' : k; updComp(); }); c.appendChild(b); })); }
 
-function mkTile(t){
-  const e=document.createElement('div');e.className='tile '+(t.type||'');
-  e.innerHTML='<span class="tile-i">'+(t.icon||'')+'</span><span class="tile-l">'+t.label+'</span>';
-  e.addEventListener('click',()=>{
-    if(t.type==='category')subBoard(t.id);
-    else if(t.action==='compose')showComp();
-    else if(t.phrase){speak(t.phrase,t.alert||t.urgent,e);if(t.alert)alert_()}
-  });return e;
-}
+$('cBk').addEventListener('click', homeBoard);
+$('cCl').addEventListener('click', () => { S.txt = ''; updComp(); });
+$('cBs').addEventListener('click', () => { S.txt = S.txt.slice(0, -1); updComp(); });
+$('cSp').addEventListener('click', () => { if (S.txt.trim()) speak(S.txt.trim()); });
 
-// === COMPOSE ===
-function showComp(){$('hb').classList.add('hid');$('sb').classList.add('hid');$('cv').classList.add('act');S.view='compose';S.txt='';updComp();mkQP();mkKB()}
-function updComp(){$('ctxt').textContent=S.txt}
-function mkQP(){const c=$('qp');c.innerHTML='';CFG.qp.forEach(p=>{const b=document.createElement('button');b.className='qpb';b.textContent=p;b.addEventListener('click',()=>{S.txt+=(S.txt&&!S.txt.endsWith(' ')?' ':'')+p+' ';updComp()});c.appendChild(b)})}
-function mkKB(){const c=$('kb');c.innerHTML='';[['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L',"'"],['Z','X','C','V',' ','B','N','M','.',',']].forEach(r=>r.forEach(k=>{const b=document.createElement('button');b.className='k'+(k===' '?' spc':'');b.textContent=k===' '?'SPACE':k;b.addEventListener('click',()=>{S.txt+=k===' '?' ':k;updComp()});c.appendChild(b)}))}
+// REPEAT
+$('bRpt').addEventListener('click', () => { if (S.last) speak(S.last, S.lastU); });
+$('bRptB').addEventListener('click', () => { if (S.last) speak(S.last, S.lastU); });
 
-$('cBk').addEventListener('click',homeBoard);
-$('cCl').addEventListener('click',()=>{S.txt='';updComp()});
-$('cBs').addEventListener('click',()=>{S.txt=S.txt.slice(0,-1);updComp()});
-$('cSp').addEventListener('click',()=>{if(S.txt.trim())speak(S.txt.trim())});
+// SETTINGS
+$('bSet').addEventListener('click', () => $('sOv').classList.add('act'));
+$('sX').addEventListener('click', () => $('sOv').classList.remove('act'));
+$('sOv').addEventListener('click', e => { if (e.target.id === 'sOv') $('sOv').classList.remove('act'); });
+$('rs').addEventListener('input', e => { $('rv').textContent = e.target.value; sv('rate', e.target.value); });
 
-// === REPEAT ===
-$('bRpt').addEventListener('click',()=>{if(S.last)speak(S.last,S.lastU)});
-$('bRptB').addEventListener('click',()=>{if(S.last)speak(S.last,S.lastU)});
+// VOICE PICKER
+$('oVP').addEventListener('click', () => { $('sOv').classList.remove('act'); $('vOv').classList.add('act'); mkVP(); });
+$('vX').addEventListener('click', () => $('vOv').classList.remove('act'));
+$('vOv').addEventListener('click', e => { if (e.target.id === 'vOv') $('vOv').classList.remove('act'); });
 
-// === SETTINGS ===
-$('bSet').addEventListener('click',()=>$('sOv').classList.add('act'));
-$('sX').addEventListener('click',()=>$('sOv').classList.remove('act'));
-$('sOv').addEventListener('click',e=>{if(e.target.id==='sOv')$('sOv').classList.remove('act')});
-$('rs').addEventListener('input',e=>{$('rv').textContent=e.target.value;sv('rate',e.target.value)});
-
-// === VOICE PICKER ===
-$('oVP').addEventListener('click',()=>{$('sOv').classList.remove('act');$('vOv').classList.add('act');mkVP()});
-$('vX').addEventListener('click',()=>$('vOv').classList.remove('act'));
-$('vOv').addEventListener('click',e=>{if(e.target.id==='vOv')$('vOv').classList.remove('act')});
-
-function mkVP(){
-  const g=$('vg');g.innerHTML='';
-  const saved=ld('voice')||EL.voices[0].id;
-  EL.voices.forEach(v=>{
-    const c=document.createElement('div');c.className='vc'+(v.id===saved?' sel':'');
-    c.innerHTML='<div class="vc-n">'+v.name+'</div><div class="vc-d">'+v.desc+'</div><button class="vc-p" data-id="'+v.id+'">▶ Preview</button>';
-    c.addEventListener('click',e=>{
-      if(e.target.classList.contains('vc-p'))return;
-      document.querySelectorAll('.vc').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');
-      S.voice=v.id;sv('voice',v.id);$('cvn').textContent=v.name;
-      $('vst').textContent='Selected: '+v.name;$('vst').className='vs ok';
+function mkVP() {
+  const g = $('vg'); g.innerHTML = '';
+  const saved = ld('voice') || EL.voices[0].id;
+  EL.voices.forEach(v => {
+    const c = document.createElement('div');
+    c.className = 'vc' + (v.id === saved ? ' sel' : '') + (v.isAlex ? ' alex' : '');
+    c.innerHTML = '<div class="vc-n">' + v.name + '</div><div class="vc-d">' + v.desc + '</div><button class="vc-p" data-id="' + v.id + '">▶ Preview</button>';
+    c.addEventListener('click', e => {
+      if (e.target.classList.contains('vc-p')) return;
+      document.querySelectorAll('.vc').forEach(x => x.classList.remove('sel')); c.classList.add('sel');
+      S.voice = v.id; sv('voice', v.id); $('cvn').textContent = v.name;
+      $('vst').textContent = 'Selected: ' + v.name; $('vst').className = 'vs ok';
     });
-    c.querySelector('.vc-p').addEventListener('click',async e=>{
-      e.stopPropagation();const btn=e.target;if(btn.classList.contains('ld'))return;
-      btn.classList.add('ld');btn.textContent='⏳ Loading...';
-      const old=S.voice;S.voice=v.id;
-      const ok=await elSpeak(EL.sample);
-      S.voice=old;btn.classList.remove('ld');btn.textContent='▶ Preview';
-      if(ok){setEngineStatus(true);$('vst').textContent='Preview ready';$('vst').className='vs ok'}
-      else{setEngineStatus(false);$('vst').textContent='Preview failed — check connection';$('vst').className='vs err'}
+    c.querySelector('.vc-p').addEventListener('click', async e => {
+      e.stopPropagation(); const btn = e.target; if (btn.classList.contains('ld')) return;
+      btn.classList.add('ld'); btn.textContent = '⏳ Loading...';
+      const old = S.voice; S.voice = v.id;
+      const ok = await elSpeak(EL.sample);
+      S.voice = old; btn.classList.remove('ld'); btn.textContent = '▶ Preview';
+      if (!ok) { $('vst').textContent = 'Preview failed — check connection'; $('vst').className = 'vs err'; }
     });
     g.appendChild(c);
   });
-  const cur=EL.voices.find(v=>v.id===saved);if(cur)$('cvn').textContent=cur.name;
+  const cur = EL.voices.find(v => v.id === saved);
+  if (cur) $('cvn').textContent = cur.name;
 }
 
-// === INIT ===
-async function init(){
-  const rate=ld('rate'),voice=ld('voice');
-  if(rate){$('rs').value=rate;$('rv').textContent=rate}
-  if(voice){S.voice=voice;const v=EL.voices.find(x=>x.id===voice);if(v)$('cvn').textContent=v.name}
-  else{S.voice=EL.voices[0].id;$('cvn').textContent=EL.voices[0].name}
+// INIT
+async function init() {
+  const rate = ld('rate'), voice = ld('voice');
+  if (rate) { $('rs').value = rate; $('rv').textContent = rate; }
+  // Default to Alex's cloned voice
+  if (voice) { S.voice = voice; const v = EL.voices.find(x => x.id === voice); if (v) $('cvn').textContent = v.name; }
+  else { S.voice = EL.voices[0].id; $('cvn').textContent = EL.voices[0].name; sv('voice', EL.voices[0].id); }
   homeBoard();
-  const ok=await testEL();
-  if(ok)setTimeout(preCache,1000);
-  if(window.speechSynthesis){speechSynthesis.getVoices();if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
+  const ok = await testEL();
+  if (ok) setTimeout(preCache, 1000);
+  if (window.speechSynthesis) { speechSynthesis.getVoices(); if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
 }
 init();
 </script>

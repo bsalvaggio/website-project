@@ -1,13 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>salvagg.io</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>salvagg.io — Bill Salvaggio</title>
+  <meta name="description" content="Bill Salvaggio — Cloud Engineer, Writer, Builder.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg-primary:#0e0f11;--border-subtle:rgba(255,255,255,.06);--border-accent:rgba(255,255,255,.1);--text-primary:#e8e6e3;--text-secondary:#9b9a97;--text-muted:#5e5d5a;--accent:#c9a96e;--accent-subtle:rgba(201,169,110,.1);--link:#7eb8d0;--link-hover:#a3d4e8;--font-display:'DM Serif Display',Georgia,serif;--font-body:'IBM Plex Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono',monospace;--max-width:820px;--transition:.25s cubic-bezier(.4,0,.2,1)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;scroll-padding-top:80px}
+    body{font-family:var(--font-body);font-weight:400;font-size:16px;line-height:1.7;color:var(--text-primary);background:var(--bg-primary);-webkit-font-smoothing:antialiased}
+    ::selection{background:var(--accent-subtle);color:var(--accent)}
+
+    /* NAV */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;background:rgba(14,15,17,.85);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border-subtle)}
+    .nav-inner{max-width:var(--max-width);margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:64px}
+    .nav-logo{font-family:var(--font-mono);font-size:.85rem;font-weight:500;color:var(--text-secondary);text-decoration:none;letter-spacing:.05em;transition:color var(--transition)}
+    .nav-logo:hover{color:var(--accent)}
+    .nav-links{display:flex;gap:1.75rem;list-style:none}
+    .nav-links a{font-size:.78rem;font-weight:500;color:var(--text-muted);text-decoration:none;text-transform:uppercase;letter-spacing:.1em;transition:color var(--transition);position:relative}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width var(--transition)}
+    .nav-links a:hover{color:var(--text-primary)}
+    .nav-links a:hover::after{width:100%}
+    .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px}
+    .nav-toggle span{display:block;width:20px;height:1.5px;background:var(--text-secondary);margin:5px 0}
+
+    /* SHARED */
+    section{padding:5rem 2rem;max-width:var(--max-width);margin:0 auto}
+    .section-label{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);margin-bottom:2rem;display:flex;align-items:center;gap:1rem}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border-subtle)}
+    .section-divider{max-width:var(--max-width);margin:0 auto;padding:0 2rem}
+    .section-divider hr{border:none;height:1px;background:var(--border-subtle)}
+
+    /* HERO */
+    .hero{padding-top:calc(64px + 4rem);padding-bottom:4rem}
+    .hero-name{font-family:var(--font-display);font-size:clamp(2rem,4.5vw,2.8rem);font-weight:400;line-height:1.2;margin-bottom:.3rem;opacity:0;animation:fadeUp .6s ease forwards .15s}
+    .hero-title{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);letter-spacing:.03em;margin-bottom:1.5rem;opacity:0;animation:fadeUp .6s ease forwards .25s}
+    .hero-summary{font-size:1.02rem;font-weight:300;color:var(--text-secondary);max-width:600px;line-height:1.8;margin-bottom:1.75rem;opacity:0;animation:fadeUp .6s ease forwards .35s}
+    .hero-links{display:flex;gap:1.5rem;flex-wrap:wrap;opacity:0;animation:fadeUp .6s ease forwards .45s}
+    .hero-link{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);text-decoration:none;transition:color var(--transition)}
+    .hero-link svg{width:16px;height:16px;opacity:.6;transition:opacity var(--transition)}
+    .hero-link:hover{color:var(--text-primary)}
+    .hero-link:hover svg{opacity:1}
+
+    /* RESUME */
+    .resume-header h2{font-family:var(--font-display);font-size:2rem;margin-bottom:.5rem}
+    .resume-header p{color:var(--text-secondary);font-weight:300;max-width:640px;line-height:1.8}
+    .resume-block{margin-top:3rem}
+    .resume-block-title{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.15em;color:var(--text-muted);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--border-subtle)}
+    .experience-item{padding:1.5rem 0;border-bottom:1px solid var(--border-subtle)}
+    .experience-item:last-child{border-bottom:none}
+    .experience-role{font-weight:600;font-size:1rem;margin-bottom:.15rem}
+    .experience-company{color:var(--accent);font-size:.9rem}
+    .experience-meta{font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);margin:.35rem 0 .75rem;letter-spacing:.02em}
+    .experience-desc{color:var(--text-secondary);font-size:.92rem;font-weight:300;line-height:1.75}
+    .experience-highlights{list-style:none;margin-top:.75rem;padding:0}
+    .experience-highlights li{color:var(--text-secondary);font-size:.88rem;font-weight:300;line-height:1.7;padding-left:1.25rem;position:relative;margin-bottom:.4rem}
+    .experience-highlights li::before{content:'\203A';position:absolute;left:0;color:var(--accent);font-weight:500}
+    .skill-row{display:flex;align-items:baseline;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--border-subtle)}
+    .skill-row:last-child{border-bottom:none}
+    .skill-category{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);min-width:120px;flex-shrink:0}
+    .skill-items{color:var(--text-secondary);font-size:.88rem;font-weight:300;line-height:1.7}
+    .cert-list,.edu-list{list-style:none;padding:0}
+    .cert-list li,.edu-list li{padding:.6rem 0;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.5rem}
+    .cert-list li:last-child,.edu-list li:last-child{border-bottom:none}
+    .cert-list a{color:var(--link);text-decoration:none;font-size:.92rem;transition:color var(--transition)}
+    .cert-list a:hover{color:var(--link-hover)}
+    .cert-badge,.edu-degree{font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);letter-spacing:.05em}
+    .edu-name{font-size:.92rem}
+    .edu-school{color:var(--text-secondary);font-weight:300}
+
+    /* PROJECTS */
+    .project-card{padding:1.75rem;border:1px solid var(--border-subtle);border-radius:6px;margin-bottom:1.5rem;transition:border-color var(--transition)}
+    .project-card:hover{border-color:var(--border-accent)}
+    .project-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem}
+    .project-name{font-family:var(--font-display);font-size:1.25rem}
+    .project-status{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;padding:.25rem .6rem;border-radius:3px;flex-shrink:0}
+    .project-status.live{color:#6dbf8b;background:rgba(109,191,139,.1);border:1px solid rgba(109,191,139,.15)}
+    .project-status.building{color:var(--accent);background:var(--accent-subtle);border:1px solid rgba(201,169,110,.15)}
+    .project-status.idea{color:var(--text-muted);background:rgba(94,93,90,.1);border:1px solid rgba(94,93,90,.2)}
+    .project-desc{color:var(--text-secondary);font-size:.92rem;font-weight:300;line-height:1.75;margin-bottom:1rem}
+    .project-tech{display:flex;gap:.5rem;flex-wrap:wrap}
+    .project-tech span{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);padding:.2rem .5rem;border:1px solid var(--border-subtle);border-radius:3px}
+    .project-link{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--font-mono);font-size:.8rem;color:var(--link);text-decoration:none;margin-top:.75rem;transition:color var(--transition)}
+    .project-link:hover{color:var(--link-hover)}
+
+    /* ARCHITECTURE (nested in projects) */
+    .arch-diagram{margin:1.5rem 0;border-radius:8px;overflow:hidden;border:1px solid var(--border-subtle)}
+    .arch-diagram img{width:100%;height:auto;display:block}
+    .arch-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem}
+    .arch-stack-item{padding:1rem;border:1px solid var(--border-subtle);border-radius:6px;transition:border-color var(--transition)}
+    .arch-stack-item:hover{border-color:var(--border-accent)}
+    .arch-stack-label{font-family:var(--font-mono);font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:.35rem}
+    .arch-stack-detail{color:var(--text-secondary);font-size:.82rem;font-weight:300;line-height:1.6}
+    .arch-links{margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap}
+    .arch-link{font-family:var(--font-mono);font-size:.78rem;color:var(--link);text-decoration:none;padding:.5rem 1rem;border:1px solid var(--border-subtle);border-radius:4px;transition:all var(--transition)}
+    .arch-link:hover{color:var(--link-hover);border-color:var(--link);background:rgba(126,184,208,.05)}
+
+    /* WRITING */
+    .writing-intro{color:var(--text-secondary);font-weight:300;margin-bottom:3rem;max-width:560px}
+    .writing-category{margin-bottom:2.5rem}
+    .writing-category-title{font-family:var(--font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:1rem}
+    .writing-list{list-style:none;padding:0}
+    .writing-list li{border-bottom:1px solid var(--border-subtle)}
+    .writing-list a{display:block;padding:.85rem 0;color:var(--text-secondary);text-decoration:none;font-size:.92rem;font-weight:300;transition:all var(--transition);position:relative}
+    .writing-list a::before{content:'\2192';position:absolute;left:-1.25rem;opacity:0;color:var(--accent);transition:all var(--transition);font-family:var(--font-mono);font-size:.85rem}
+    .writing-list a:hover{color:var(--text-primary);padding-left:1.25rem}
+    .writing-list a:hover::before{left:0;opacity:1}
+
+    /* GALLERY */
+    .gallery-intro{color:var(--text-secondary);font-weight:300;line-height:1.8;margin-bottom:2rem;max-width:600px}
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+    .gallery-item{border-radius:6px;overflow:hidden;border:1px solid var(--border-subtle);aspect-ratio:4/3;background:var(--border-subtle);display:flex;align-items:center;justify-content:center;transition:border-color var(--transition);cursor:pointer;position:relative}
+    .gallery-item:hover{border-color:var(--border-accent)}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+    .gallery-placeholder{color:var(--text-muted);font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}
+    .gallery-note{color:var(--text-muted);font-family:var(--font-mono);font-size:.75rem;margin-top:1.5rem;font-style:italic}
+
+    /* Lightbox */
+    .lightbox{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:200;align-items:center;justify-content:center;cursor:pointer;padding:2rem}
+    .lightbox.active{display:flex}
+    .lightbox img{max-width:90%;max-height:90vh;object-fit:contain;border-radius:4px}
+
+    /* CONTACT */
+    .contact-content{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+    .contact-text h2{font-family:var(--font-display);font-size:2rem;margin-bottom:1rem}
+    .contact-text p{color:var(--text-secondary);font-weight:300;line-height:1.8}
+    .contact-links-list{list-style:none;padding:0}
+    .contact-links-list li{border-bottom:1px solid var(--border-subtle)}
+    .contact-links-list a{display:flex;align-items:center;gap:1rem;padding:1.1rem 0;color:var(--text-primary);text-decoration:none;transition:var(--transition)}
+    .contact-links-list a:hover{color:var(--accent)}
+    .contact-links-list svg{width:18px;height:18px;color:var(--text-muted);flex-shrink:0;transition:color var(--transition)}
+    .contact-links-list a:hover svg{color:var(--accent)}
+    .contact-link-label{font-size:.92rem;font-weight:500}
+    .contact-link-detail{display:block;font-size:.75rem;font-family:var(--font-mono);color:var(--text-muted);margin-top:.1rem}
+    .btc-address{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);word-break:break-all;cursor:pointer;transition:color var(--transition)}
+    .btc-address:hover{color:var(--accent)}
+    .btc-copied{font-family:var(--font-mono);font-size:.65rem;color:#6dbf8b;margin-left:.5rem;opacity:0;transition:opacity .3s}
+    .btc-copied.show{opacity:1}
+
+    /* FOOTER */
+    .footer{padding:3rem 2rem;border-top:1px solid var(--border-subtle)}
+    .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+    .footer-text,.footer-counter{font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);letter-spacing:.05em}
+
+    /* ANIMATIONS */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .fade-section{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+    .fade-section.visible{opacity:1;transform:translateY(0)}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      section{padding:3.5rem 1.5rem}
+      .nav-links{display:none}
+      .nav-links.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(14,15,17,.97);backdrop-filter:blur(20px);padding:1.5rem 2rem;gap:1.25rem;border-bottom:1px solid var(--border-subtle)}
+      .nav-toggle{display:block}
+      .contact-content{grid-template-columns:1fr;gap:2rem}
+      .footer-inner{flex-direction:column;gap:.75rem}
+      .skill-row{flex-direction:column;gap:.25rem}
+      .skill-category{min-width:unset}
+      .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+    }
+    @media(max-width:480px){section{padding:3rem 1.25rem}.hero-links,.arch-links{flex-direction:column;gap:.75rem}}
+  </style>
+</head>
+<body>
+
+  <nav class="nav"><div class="nav-inner">
+    <a href="#" class="nav-logo">salvagg.io</a>
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="#resume" onclick="closeNav()">Resume</a></li>
+      <li><a href="#projects" onclick="closeNav()">Projects</a></li>
+      <li><a href="#writing" onclick="closeNav()">Writing</a></li>
+      <li><a href="#gallery" onclick="closeNav()">Gallery</a></li>
+      <li><a href="#contact" onclick="closeNav()">Contact</a></li>
+    </ul>
+  </div></nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <h1 class="hero-name">Bill Salvaggio</h1>
+    <p class="hero-title">Cloud Engineer · Buffalo, NY</p>
+    <p class="hero-summary">AWS-certified engineer with 4+ years building and managing multi-account cloud infrastructure for enterprise data platforms. Notre Dame and Adelphi alumnus. I write about DevOps, build tools, and enjoy working at the intersection of technology and hard problems.</p>
+    <div class="hero-links">
+      <a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener" class="hero-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+      <a href="https://github.com/bsalvaggio" target="_blank" rel="noopener" class="hero-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
+      <a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener" class="hero-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zm7.42 0c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>Medium</a>
+    </div>
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- RESUME -->
+  <section id="resume" class="fade-section">
+    <div class="section-label">Resume</div>
+    <div class="resume-header">
+      <h2>Professional Experience</h2>
+      <p>Specialized in IAM architecture, Infrastructure as Code, and cross-functional collaboration in regulated environments. Proven track record reducing costs by $150K+ annually while strengthening security posture and implementing CI/CD automation.</p>
+    </div>
+
+    <div class="resume-block">
+      <div class="resume-block-title">Technical Skills</div>
+      <div class="skill-row"><span class="skill-category">Cloud</span><span class="skill-items">AWS (EC2, S3, Lambda, RDS, DynamoDB, ECS/EKS, VPC, CloudWatch, CloudFront, API Gateway, GuardDuty, IAM, Auto Scaling, ELB)</span></div>
+      <div class="skill-row"><span class="skill-category">IaC</span><span class="skill-items">Terraform, AWS CloudFormation, Terraform Cloud</span></div>
+      <div class="skill-row"><span class="skill-category">CI/CD</span><span class="skill-items">GitHub Actions, GitLab CI/CD, Docker, Kubernetes, AWS CodePipeline, CodeBuild</span></div>
+      <div class="skill-row"><span class="skill-category">Languages</span><span class="skill-items">Python (Boto3), Bash/Shell scripting</span></div>
+      <div class="skill-row"><span class="skill-category">Security</span><span class="skill-items">IAM policy design, cross-account architecture, AWS Trusted Advisor, Well-Architected Framework, FinOps, tagging governance</span></div>
+      <div class="skill-row"><span class="skill-category">Data</span><span class="skill-items">Databricks, Apache Airflow, DMS (Database Migration Service)</span></div>
+    </div>
+
+    <div class="resume-block">
+      <div class="resume-block-title">Experience</div>
+      <div class="experience-item">
+        <div class="experience-role">Cloud Systems Engineer — Systems Infrastructure Team</div>
+        <div class="experience-company">Delaware North — Buffalo, NY</div>
+        <div class="experience-meta">Sep 2024 – Oct 2025</div>
+        <ul class="experience-highlights">
+          <li>Reduced annual AWS spend by $150K+ through comprehensive resource audit across 12 AWS accounts</li>
+          <li>Drove tagging compliance initiative enabling accurate cost allocation across business units</li>
+          <li>Led security remediation addressing 40+ AWS Trusted Advisor findings</li>
+          <li>Modernized legacy deployments by implementing GitLab CI/CD pipelines with Terraform</li>
+          <li>Collaborated cross-functionally with Data, Systems, Network, and Security teams</li>
+        </ul>
+      </div>
+      <div class="experience-item">
+        <div class="experience-role">Cloud Engineer — Data Engineering Team</div>
+        <div class="experience-company">Delaware North — Buffalo, NY</div>
+        <div class="experience-meta">Apr 2024 – Sep 2024</div>
+        <ul class="experience-highlights">
+          <li>Maintained cloud infrastructure across 7 AWS accounts supporting Databricks and Airflow</li>
+          <li>Architected 25+ IAM cross-account trust relationships for secure service authentication</li>
+          <li>Led 25+ Change Advisory Board changes with zero production incidents</li>
+          <li>Implemented cross-account CloudWatch observability using Lambda and Kinesis</li>
+          <li>Managed resource lifecycle including emergency RDS SSL rotation and Lambda runtime upgrades</li>
+        </ul>
+      </div>
+      <div class="experience-item">
+        <div class="experience-role">National Accounts Representative</div>
+        <div class="experience-company">Jiffy Junk Inc. — Remote</div>
+        <div class="experience-meta">Dec 2020 – Jan 2024</div>
+        <p class="experience-desc">Managed national account operations including bookkeeping, scheduling, and project management.</p>
+      </div>
+      <div class="experience-item">
+        <div class="experience-role">Project Manager</div>
+        <div class="experience-company">Sir Speedy Print, Signs &amp; Marketing — Westbury, NY</div>
+        <div class="experience-meta">Apr 2016 – Jun 2020</div>
+        <p class="experience-desc">Oversaw production and installation of large-format signage, vehicle graphics, and vinyl work. Increased signage revenue by over 30%.</p>
+      </div>
+    </div>
+
+    <div class="resume-block">
+      <div class="resume-block-title">Certifications</div>
+      <ul class="cert-list">
+        <li><a href="https://www.credly.com/badges/3967919a-d932-4e25-9e0d-acdd269c1cea" target="_blank" rel="noopener">AWS Certified Developer Associate</a><span class="cert-badge">AWS</span></li>
+        <li><a href="https://www.credly.com/badges/5379e83a-8bb9-4702-bb6c-09decd2f1284/public_url" target="_blank" rel="noopener">Terraform Associate 002</a><span class="cert-badge">HashiCorp</span></li>
+        <li><a href="https://cs.lpi.org/caf/Xamman/certification/verify/LPI000549066/dh96w95anf" target="_blank" rel="noopener">LE-1 Linux Essentials</a><span class="cert-badge">LPI</span></li>
+      </ul>
+    </div>
+
+    <div class="resume-block">
+      <div class="resume-block-title">Education</div>
+      <ul class="edu-list">
+        <li><span><span class="edu-name">Master of Science</span><span class="edu-school"> — Adelphi University, Garden City, NY</span></span><span class="edu-degree">M.S.</span></li>
+        <li><span><span class="edu-name">Bachelor of Science</span><span class="edu-school"> — University of Notre Dame, South Bend, IN</span></span><span class="edu-degree">B.S.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="fade-section">
+    <div class="section-label">Projects</div>
+
+    <div class="project-card">
+      <div class="project-card-header">
+        <span class="project-name">BitProof</span>
+        <span class="project-status building">In Development</span>
+      </div>
+      <p class="project-desc">A Bitcoin-anchored timestamping service that creates cryptographic proofs of digital content existence. Uses OpenTimestamps to anchor document hashes to the Bitcoin blockchain, providing tamper-proof verification that content existed at a specific point in time. Supports file timestamping and web archiving with a fully stateless architecture.</p>
+      <div class="project-tech">
+        <span>Bitcoin</span><span>OpenTimestamps</span><span>Python</span><span>Railway</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-card-header">
+        <span class="project-name">salvagg.io</span>
+        <span class="project-status live">Live</span>
+      </div>
+      <p class="project-desc">This website — built as the AWS Cloud Resume Challenge. A serverless personal site running on S3 + CloudFront with a Python Lambda visitor counter, DynamoDB backend, and GitHub Actions CI/CD pipeline. All infrastructure defined in Terraform.</p>
+      <div class="arch-diagram"><img src="website_diagram.png" alt="AWS architecture diagram"></div>
+      <div class="arch-stack">
+        <div class="arch-stack-item"><div class="arch-stack-label">Hosting</div><div class="arch-stack-detail">S3 + CloudFront CDN with HTTPS</div></div>
+        <div class="arch-stack-item"><div class="arch-stack-label">DNS</div><div class="arch-stack-detail">Route 53 custom domain</div></div>
+        <div class="arch-stack-item"><div class="arch-stack-label">Backend</div><div class="arch-stack-detail">API Gateway + Lambda + DynamoDB</div></div>
+        <div class="arch-stack-item"><div class="arch-stack-label">CI/CD</div><div class="arch-stack-detail">GitHub Actions auto-deploy</div></div>
+        <div class="arch-stack-item"><div class="arch-stack-label">IaC</div><div class="arch-stack-detail">Terraform</div></div>
+        <div class="arch-stack-item"><div class="arch-stack-label">Frontend</div><div class="arch-stack-detail">Static HTML/CSS/JS — zero dependencies</div></div>
+      </div>
+      <div class="arch-links">
+        <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-c5c0c6fe9593" target="_blank" rel="noopener" class="arch-link">Part I — Infrastructure →</a>
+        <a href="https://medium.com/@bill.salvaggio/the-aws-cloud-resume-challenge-project-part-ii-5c36029dbc59" target="_blank" rel="noopener" class="arch-link">Part II — CI/CD →</a>
+      </div>
+    </div>
+
+    <!-- Placeholder for future projects -->
+    <!--
+    <div class="project-card">
+      <div class="project-card-header">
+        <span class="project-name">Your Next Project</span>
+        <span class="project-status idea">Idea</span>
+      </div>
+      <p class="project-desc">Description here.</p>
+    </div>
+    -->
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- WRITING -->
+  <section id="writing" class="fade-section">
+    <div class="section-label">Writing</div>
+    <p class="writing-intro">Technical articles and project writeups. Mostly DevOps and cloud infrastructure for now — more topics coming.</p>
+
+    <div class="writing-category">
+      <div class="writing-category-title">Terraform</div>
+      <ul class="writing-list">
+        <li><a href="https://towardsdev.com/terraforming-aws-a-comprehensive-guide-to-the-art-of-infrastructure-automation-scaling-74a94f4039bd" target="_blank" rel="noopener">Terraforming AWS: The Art of Infrastructure Automation, Scaling, &amp; Management</a></li>
+        <li><a href="https://towardsdev.com/automating-jenkins-deployment-with-advanced-terraform-techniques-c41007151e8d" target="_blank" rel="noopener">Automating Jenkins Deployment with Advanced Terraform Techniques</a></li>
+      </ul>
+    </div>
+    <div class="writing-category">
+      <div class="writing-category-title">Kubernetes</div>
+      <ul class="writing-list">
+        <li><a href="https://towardsdev.com/kubernetes-deploying-nginx-servers-with-configmaps-shared-services-with-minikube-618aee9a8ff6" target="_blank" rel="noopener">Deploying NGINX Servers with ConfigMaps &amp; Shared Services with MiniKube</a></li>
+        <li><a href="https://towardsdev.com/using-minikube-to-modify-our-docker-stack-9254573674cc" target="_blank" rel="noopener">Using Minikube to Modify our Docker Stack</a></li>
+      </ul>
+    </div>
+    <div class="writing-category">
+      <div class="writing-category-title">Docker</div>
+      <ul class="writing-list">
+        <li><a href="https://towardsdev.com/dive-deeper-into-docker-creating-a-docker-stack-9589a435d806" target="_blank" rel="noopener">Dive Deeper into Docker: Creating a Docker Stack</a></li>
+        <li><a href="https://towardsdev.com/building-a-three-tier-architecture-with-docker-swarm-on-aws-2a267c1a73c" target="_blank" rel="noopener">Building a Three Tier Architecture with Docker Swarm on AWS</a></li>
+        <li><a href="https://towardsdev.com/building-a-boto3-development-environment-using-docker-42705731b10a" target="_blank" rel="noopener">Building a Boto3 Development Environment Using Docker</a></li>
+      </ul>
+    </div>
+    <div class="writing-category">
+      <div class="writing-category-title">AWS</div>
+      <ul class="writing-list">
+        <li><a href="https://towardsdev.com/building-sns-serverless-architecture-with-aws-through-python-5bf49522e6ba" target="_blank" rel="noopener">Building an SQS Queue with AWS Lambda through Python</a></li>
+        <li><a href="https://towardsdev.com/create-an-auto-scaling-group-of-ec2-instances-for-high-availability-a176d4ec0f60" target="_blank" rel="noopener">Create an Auto-Scaling Group of EC2 Instances for High Availability</a></li>
+        <li><a href="https://towardsdev.com/stopping-ec2-instances-using-python-boto3-in-cloud9-def83e77cab4" target="_blank" rel="noopener">Stopping EC2 Instances Using Python &amp; Boto3 in Cloud9</a></li>
+        <li><a href="https://towardsdev.com/create-an-ec2-instance-with-an-automated-install-of-nginx-ef0dfef3fecd" target="_blank" rel="noopener">Create an EC2 Instance with an Automated Install of NGINX</a></li>
+        <li><a href="https://towardsdev.com/launch-an-aws-ec2-instance-install-apache-using-a-bash-script-984c797f1b88" target="_blank" rel="noopener">Launch an AWS EC2 Instance &amp; Install Apache using a BASH Script</a></li>
+      </ul>
+    </div>
+    <div class="writing-category">
+      <div class="writing-category-title">Miscellaneous</div>
+      <ul class="writing-list">
+        <li><a href="https://towardsdev.com/quick-start-to-git-github-9956f8fa17c5" target="_blank" rel="noopener">Quick Start to Git &amp; GitHub</a></li>
+        <li><a href="https://medium.com/@bill.salvaggio/installing-nginx-on-centos-8-4d5ff1b828cd" target="_blank" rel="noopener">Installing NGINX on CentOS 8</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="fade-section">
+    <div class="section-label">Gallery</div>
+    <p class="gallery-intro">Before cloud engineering, I spent five years producing and installing large-format signage, vehicle graphics, and vinyl work at Sir Speedy Print, Signs &amp; Marketing.</p>
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- Photos go here. Add images to a /gallery/ folder and uncomment: -->
+      <!-- <div class="gallery-item"><img src="gallery/photo1.jpg" alt="Sign installation" onclick="openLightbox(this.src)"></div> -->
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">Photos coming soon</span></div>
+    </div>
+    <p class="gallery-note">Full portfolio available on <a href="https://www.flickr.com/photos/billsal/with/49681154586" target="_blank" rel="noopener" style="color:var(--link);text-decoration:none">Flickr</a></p>
+  </section>
+
+  <div class="section-divider"><hr></div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="fade-section">
+    <div class="section-label">Contact</div>
+    <div class="contact-content">
+      <div class="contact-text">
+        <h2>Get in touch</h2>
+        <p>Open to connecting on projects, opportunities, or just good conversation. Best reached via LinkedIn or email.</p>
+      </div>
+      <ul class="contact-links-list">
+        <li><a href="mailto:billy.salvaggio@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span><span class="contact-link-label">Email</span><span class="contact-link-detail">billy.salvaggio@gmail.com</span></span></a></li>
+        <li><a href="https://www.linkedin.com/in/billsalvaggio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span><span class="contact-link-label">LinkedIn</span><span class="contact-link-detail">linkedin.com/in/billsalvaggio</span></span></a></li>
+        <li><a href="https://github.com/bsalvaggio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span><span class="contact-link-label">GitHub</span><span class="contact-link-detail">github.com/bsalvaggio</span></span></a></li>
+        <li><a href="https://medium.com/@bill.salvaggio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zm7.42 0c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg><span><span class="contact-link-label">Medium</span><span class="contact-link-detail">@bill.salvaggio</span></span></a></li>
+        <li>
+          <a href="#" onclick="copyBtc(event)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.546zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.7-.17-1.053-.248l.53-2.12-1.315-.33-.54 2.154c-.285-.065-.565-.13-.84-.2l.002-.007-1.815-.453-.35 1.407s.975.224.955.238c.535.136.63.49.615.77l-.617 2.47c.037.01.085.024.138.047l-.14-.036-.865 3.47c-.065.165-.23.41-.607.315.014.02-.955-.24-.955-.24l-.652 1.51 1.71.427.946.243-.546 2.19 1.315.33.54-2.17c.36.1.71.19 1.05.273l-.538 2.156 1.315.33.547-2.18c2.24.427 3.93.254 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.2 1.508-.76 1.68-1.93h.002zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.723-2.9c.893.224 3.753.667 3.328 2.37zm.41-4.24c-.37 1.49-2.662.733-3.405.548l.654-2.63c.744.186 3.137.534 2.752 2.083z"/></svg>
+            <span>
+              <span class="contact-link-label">Bitcoin<span class="btc-copied" id="btc-copied">copied!</span></span>
+              <span class="contact-link-detail btc-address" id="btc-addr">YOUR_BTC_ADDRESS_HERE</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Gallery image">
+  </div>
+
+  <footer class="footer"><div class="footer-inner">
+    <span class="footer-text">&copy; 2025 salvagg.io</span>
+    <span class="footer-counter" id="visitor-counter"></span>
+  </div></footer>
+
+  <script>
+    function closeNav(){document.querySelector('.nav-links').classList.remove('open')}
+
+    // Scroll reveals
+    const observer=new IntersectionObserver(e=>{e.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.08});
+    document.querySelectorAll('.fade-section').forEach(el=>observer.observe(el));
+
+    // Visitor counter
+    (async function(){try{const r=await fetch('https://1wincht4l5.execute-api.us-east-1.amazonaws.com/prod/counter',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'}});if(r.ok){const d=await r.json();const el=document.getElementById('visitor-counter');if(el&&d.count)el.textContent='visitors: '+parseInt(d.count,10).toLocaleString()}}catch(e){}})();
+
+    // Copy BTC address
+    function copyBtc(e){
+      e.preventDefault();
+      const addr=document.getElementById('btc-addr').textContent;
+      navigator.clipboard.writeText(addr).then(()=>{
+        const el=document.getElementById('btc-copied');
+        el.classList.add('show');
+        setTimeout(()=>el.classList.remove('show'),2000);
+      });
+    }
+
+    // Gallery lightbox
+    function openLightbox(src){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox').classList.add('active')}
+    function closeLightbox(){document.getElementById('lightbox').classList.remove('active')}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()});
+  </script>
+</body>
 </html>

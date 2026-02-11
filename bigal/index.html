@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Big Al">
+<title>Big Al</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&display=swap');
+:root{--bg:#0f1724;--bg2:#1a2538;--tile:#1e2d44;--tile-h:#263a54;--tile-a:#2f4666;--gold:#f0a830;--gold-d:#c4892a;--red:#e74c4c;--red-bg:#3d1c1c;--green:#4ade80;--green-bg:#1a3d2a;--t1:#f0f0f0;--t2:#8aa0bc;--t3:#5a7089;--brd:rgba(255,255,255,0.06);--sh:0 2px 8px rgba(0,0,0,0.3);--r:16px;--gap:12px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',-apple-system,sans-serif}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;flex-shrink:0}
+.hdr-b{display:flex;align-items:center;gap:10px}
+.hdr-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold-d));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--bg)}
+.hdr-t{font-size:22px;font-weight:700}
+.hdr-s{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.hdr-a{display:flex;gap:8px;align-items:center}
+.bi{width:44px;height:44px;border-radius:12px;border:1px solid var(--brd);background:var(--bg2);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+.bi:active{background:var(--tile-h)}
+.main{flex:1;overflow:hidden;padding:0 16px 12px;display:flex;flex-direction:column}
+.board{flex:1;display:grid;gap:var(--gap);padding:4px;align-content:stretch}
+.board.hb{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}
+.board.sb{grid-template-columns:repeat(4,1fr);grid-template-rows:auto repeat(2,1fr)}
+.board.hid{display:none}
+.tile{background:var(--tile);border-radius:var(--r);border:1px solid var(--brd);box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 12px;cursor:pointer;transition:transform .1s,background .1s;position:relative;overflow:hidden;min-height:0}
+.tile:active{transform:scale(.97);background:var(--tile-a)}
+.tile-i{font-size:34px;line-height:1;flex-shrink:0}
+.tile-l{font-size:16px;font-weight:700;text-align:center;line-height:1.2}
+.tile.urgent{background:var(--red-bg);border-color:rgba(231,76,76,.3)}
+.tile.urgent .tile-l{color:var(--red)}
+.tile.confirm-yes{background:var(--green-bg);border-color:rgba(74,222,128,.2)}
+.tile.confirm-yes .tile-l{color:var(--green)}
+.tile.category{border-color:rgba(240,168,48,.15)}
+.tile.category .tile-l{color:var(--gold)}
+.tile.category::after{content:'›';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--t3);font-weight:300}
+.tile.action{background:var(--bg2)}
+.tile.spk{animation:tp .8s ease-in-out}
+@keyframes tp{0%{box-shadow:0 0 0 0 rgba(240,168,48,.4)}50%{box-shadow:0 0 0 8px rgba(240,168,48,0)}100%{box-shadow:var(--sh)}}
+.shdr{display:flex;align-items:center;gap:12px;padding:6px 0;grid-column:1/-1}
+.bb{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--bg2);border:1px solid var(--brd);border-radius:12px;color:var(--t2);font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
+.bb:active{background:var(--tile-h)}
+.st{font-size:20px;font-weight:700;color:var(--gold)}
+.cv{flex:1;display:none;flex-direction:column;gap:10px}
+.cv.act{display:flex}
+.co{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:16px 20px;min-height:80px;font-size:22px;font-weight:600;font-family:inherit;color:var(--t1);line-height:1.4;display:flex;align-items:flex-start}
+.ct{flex:1;min-height:50px;word-wrap:break-word;overflow-wrap:break-word}
+.cc{display:inline-block;width:3px;height:26px;background:var(--gold);animation:bl 1s step-end infinite;vertical-align:text-bottom;margin-left:2px}
+@keyframes bl{50%{opacity:0}}
+.ca{display:flex;gap:8px;flex-shrink:0}
+.cb{flex:1;padding:16px;border-radius:14px;border:1px solid var(--brd);font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.cb:active{transform:scale(.97)}
+.cb.sp{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.cb.cl{background:var(--tile);color:var(--t2)}
+.cb.bk{background:var(--bg2);color:var(--t2);flex:.6}
+.cb.bs{background:var(--tile);color:var(--t2);flex:.6}
+.qp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0}
+.qpb{padding:12px 8px;background:var(--tile);border:1px solid var(--brd);border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;color:var(--t1);text-align:center;cursor:pointer}
+.qpb:active{background:var(--tile-a)}
+.kb{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;flex:1;align-content:center}
+.k{padding:12px 4px;background:var(--tile);border:1px solid var(--brd);border-radius:10px;font-size:19px;font-weight:600;font-family:inherit;color:var(--t1);text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.k:active{background:var(--tile-a)}
+.k.spc{grid-column:span 4;font-size:13px;color:var(--t3)}
+.sbar{position:fixed;top:0;left:0;right:0;height:4px;background:var(--gold);transform:scaleX(0);transform-origin:left;z-index:100}
+.sbar.act{transform:scaleX(1);animation:sp 1.2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:1}50%{opacity:.4}}
+.ls{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(30,45,68,.95);backdrop-filter:blur(10px);border:1px solid var(--brd);border-radius:14px;padding:12px 20px;font-size:15px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:10px;transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:50;max-width:80%}
+.ls.vis{transform:translateX(-50%) translateY(0)}
+.ls-i{color:var(--gold);font-size:16px;flex-shrink:0}
+.rpt{padding:8px 14px;background:var(--tile);border:1px solid var(--brd);border-radius:8px;color:var(--gold);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+.af{position:fixed;inset:0;background:rgba(231,76,76,.15);z-index:300;pointer-events:none;opacity:0}
+.af.act{opacity:1;animation:ap .6s ease-in-out 3}
+@keyframes ap{0%,100%{opacity:0}50%{opacity:1}}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:200}
+.ov.act{display:flex}
+.pn{background:var(--bg2);border-radius:20px;padding:28px;width:560px;max-width:92vw;max-height:85vh;overflow-y:auto;border:1px solid var(--brd)}
+.pn-t{font-size:22px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.pn-x{width:40px;height:40px;border-radius:10px;border:1px solid var(--brd);background:var(--tile);color:var(--t2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--brd)}
+.sl{font-size:16px;font-weight:600}
+.sd{font-size:12px;color:var(--t3);margin-top:2px}
+.sc{display:flex;align-items:center;gap:10px}
+input[type=range]{-webkit-appearance:none;width:140px;height:8px;background:var(--tile);border-radius:4px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;background:var(--gold);border-radius:50%;cursor:pointer}
+.vg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.vc{background:var(--tile);border:2px solid var(--brd);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s,background .2s}
+.vc:active{background:var(--tile-a)}
+.vc.sel{border-color:var(--gold);background:rgba(240,168,48,.08)}
+.vc-n{font-size:17px;font-weight:700;margin-bottom:4px}
+.vc-d{font-size:12px;color:var(--t3);line-height:1.3}
+.vc-p{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;color:var(--gold);cursor:pointer}
+.vc-p:active{background:var(--tile-h)}
+.vc-p.ld{opacity:.5;pointer-events:none}
+.vc.alex{border-color:rgba(240,168,48,.3);background:rgba(240,168,48,.04)}
+.vc.alex .vc-n::after{content:' ⭐';font-size:14px}
+.vs{text-align:center;padding:12px;font-size:13px;color:var(--t3)}
+.vs.err{color:var(--red)}.vs.ok{color:var(--green)}
+@media(max-height:600px){.tile-i{font-size:26px}.tile-l{font-size:14px}.hdr{padding:6px 16px}.tile{padding:8px 6px;gap:3px}}
+@media(orientation:portrait){.board.hb{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr)}.board.sb{grid-template-columns:repeat(3,1fr)}.qp{grid-template-columns:repeat(3,1fr)}.vg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="sbar" id="sbar"></div>
+<div class="af" id="af"></div>
+<header class="hdr">
+  <div class="hdr-b"><div class="hdr-logo">A</div><div><div class="hdr-t">Big Al</div><div class="hdr-s">Alex's Voice</div></div></div>
+  <div class="hdr-a"><button class="bi" id="bRpt" title="Repeat last">🔁</button><button class="bi" id="bSet" title="Settings">⚙️</button></div>
+</header>
+<main class="main">
+  <div class="board hb" id="hb"></div>
+  <div class="board sb hid" id="sb"></div>
+  <div class="cv" id="cv">
+    <div class="co"><div class="ct" id="ctxt"></div><div class="cc"></div></div>
+    <div class="ca">
+      <button class="cb bk" id="cBk">← Back</button>
+      <button class="cb bs" id="cBs">⌫</button>
+      <button class="cb cl" id="cCl">Clear</button>
+      <button class="cb sp" id="cSp">🔊 Speak</button>
+    </div>
+    <div class="qp" id="qp"></div>
+    <div class="kb" id="kb"></div>
+  </div>
+</main>
+<div class="ls" id="ls"><span class="ls-i">🔊</span><span id="lst"></span><button class="rpt" id="bRptB">Repeat</button></div>
+
+<!-- SETTINGS -->
+<div class="ov" id="sOv">
+  <div class="pn">
+    <div class="pn-t">Settings<button class="pn-x" id="sX">✕</button></div>
+    <div class="sr" style="cursor:pointer" id="oVP"><div><div class="sl">Voice</div><div class="sd" id="cvn">Alex's Voice</div></div><div class="sc" style="color:var(--gold);font-size:20px">›</div></div>
+    <div class="sr"><div><div class="sl">Speech Speed</div><div class="sd">Slower is clearer for speeches</div></div><div class="sc"><span id="rv">0.8</span><input type="range" id="rs" min="0.5" max="1.3" step="0.1" value="0.8"></div></div>
+    <div class="sr"><div><div class="sl">Voice Engine</div><div class="sd" id="es">Checking...</div></div><div class="sc"><span id="ei" style="font-size:24px">⏳</span></div></div>
+    <div class="sr" style="border:none;padding-top:16px"><div><div class="sl" style="color:var(--t3)">Big Al v2.1</div><div class="sd">Made with love for Alex 💛</div></div></div>
+  </div>
+</div>
+
+<!-- VOICE PICKER -->
+<div class="ov" id="vOv">
+  <div class="pn" style="width:620px">
+    <div class="pn-t">Choose Alex's Voice<button class="pn-x" id="vX">✕</button></div>
+    <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.5">Tap <strong>Preview</strong> to hear each voice. <strong>Alex's Voice</strong> is cloned from a real recording.</p>
+    <div class="vg" id="vg"></div>
+    <div class="vs" id="vst"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// BIG AL v2.1 — Alex's Cloned Voice
+// ============================================================
+
+const EL = {
+  // API key intentionally not stored client-side.
+  key: '',
+  url: 'https://api.elevenlabs.io/v1',
+  // Alex's cloned voice is FIRST and DEFAULT
+  voices: [
+    { id: 'f6SL2KwYsFp3vnBZicBb', name: "Alex's Voice", desc: "Cloned from Alex's own voice. This is him.", isAlex: true,
+      // Calm preset for noisy-source clone to reduce intensity and urgency.
+      settings: { stability: 0.75, similarity_boost: 0.5, style: 0.0, use_speaker_boost: false } },
+    { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', desc: 'Deep, warm, clear. Great for conversation and speeches.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'Cz0K1kOv9tD8l0b5Qu53', name: 'Jon', desc: 'Relaxed, deep, and approachable.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', desc: 'Conversational, friendly, natural cadence.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', desc: 'Warm, well-paced, articulate.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', desc: 'Strong, confident, deeper register.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+    { id: 'ODq5zmih8GrVes37Dizd', name: 'Patrick', desc: 'Calm, steady, mature tone.',
+      settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } },
+  ],
+  model: 'eleven_multilingual_v2',
+  sample: "Hey, how's it going? I'm doing great today."
+};
+
+const cache = new Map();
+let curAudio = null;
+const S = { view: 'home', cat: null, txt: '', last: '', lastU: false, speaking: false, voice: null, elOk: false };
+
+// BOARD CONFIG - tuned from Alex's real phrase list
+const CFG = { home: [
+  { id: 'urgent', label: 'I Need Help', icon: '🚨', type: 'urgent', phrase: 'I need help right now', alert: true },
+  { id: 'pain', label: 'I Have Pain', icon: '😣', type: 'urgent', phrase: 'I have pain', alert: true },
+  { id: 'yes', label: 'Yes', icon: '✅', type: 'confirm-yes', phrase: 'Yes' },
+  { id: 'no', label: 'No', icon: '❌', type: 'phrase', phrase: 'No' },
+  { id: 'water', label: 'I Want Water', icon: '🥤', type: 'phrase', phrase: 'I want water' },
+  { id: 'urinal', label: 'I Need Urinal', icon: '🚻', type: 'phrase', phrase: 'I need the urinal' },
+  { id: 'needs', label: 'Needs / Mobility', icon: '🙋', type: 'category' },
+  { id: 'comfort', label: 'Comfort / Room', icon: '🌡️', type: 'category' },
+  { id: 'care', label: 'Care Tasks', icon: '🪥', type: 'category' },
+  { id: 'schedule', label: 'Schedule', icon: '🕒', type: 'category' },
+  { id: 'tv', label: 'TV / Quiet', icon: '📺', type: 'category' },
+  { id: 'compose', label: 'Type It Out', icon: '⌨️', type: 'action', action: 'compose' }
+], cats: {
+  needs: { title: 'Needs / Mobility', tiles: [
+    { label: 'I Want Drops', icon: '💧', phrase: 'I want drops' },
+    { label: 'I Want Water', icon: '🥤', phrase: 'I want water' },
+    { label: 'I Need Urinal', icon: '🚻', phrase: 'I need the urinal' },
+    { label: 'I Want to Stand', icon: '🧍', phrase: 'I want to stand' },
+    { label: 'Ready for Wheelchair', icon: '♿', phrase: "I'm ready to go in my wheelchair" },
+    { label: 'Breathing Treatment', icon: '🫁', phrase: 'I want a breathing treatment' },
+    { label: 'Suction Head Replace', icon: '💨', phrase: 'My suction head needs replacement' },
+    { label: 'Order Something', icon: '🛒', phrase: "There's something I want you to order" }
+  ]},
+  comfort: { title: 'Comfort / Room', tiles: [
+    { label: "I'm Cold", icon: '🥶', phrase: "I'm cold" },
+    { label: "I'm Hot", icon: '🥵', phrase: "I'm hot" },
+    { label: 'Reposition Me', icon: '🔄', phrase: 'Reposition me' },
+    { label: 'Help My Head', icon: '🧠', phrase: 'Help me with my head' },
+    { label: 'Open Window', icon: '🪟', phrase: 'Open the window, that smells' },
+    { label: 'AC On', icon: '❄️', phrase: 'Put the air conditioner on' },
+    { label: 'Lower Blinds', icon: '🪟', phrase: 'Lower the blinds' },
+    { label: 'Shut My Light', icon: '💡', phrase: 'Shut my light' }
+  ]},
+  care: { title: 'Care Tasks', tiles: [
+    { label: 'Cut My Nails', icon: '✂️', phrase: 'Cut my nails' },
+    { label: 'Blow My Nose', icon: '🤧', phrase: 'Blow my nose' },
+    { label: 'Put Braces On', icon: '🦿', phrase: 'Put my braces on' },
+    { label: 'Take Braces Off', icon: '🦿', phrase: 'Take my braces off' },
+    { label: 'Brush Teeth', icon: '🪥', phrase: 'I want to brush my teeth' },
+    { label: 'Charge Headphones', icon: '🎧', phrase: 'Charge my headphones' }
+  ]},
+  schedule: { title: 'Schedule', tiles: [
+    { label: 'Leave Time Today', icon: '🕒', phrase: 'What time do I leave today?' },
+    { label: 'Speech Time', icon: '🗣️', phrase: 'What time is speech?' },
+    { label: 'Tom Arrival', icon: '👤', phrase: 'What time is Tom coming?' }
+  ]},
+  tv: { title: 'TV / Room', tiles: [
+    { label: 'Be Quiet', icon: '🤫', phrase: "Be quiet, I'm watching something on TV" },
+    { label: 'TV in My Room', icon: '📺', phrase: 'Put the TV on in my room' },
+    { label: 'Glasses to Room', icon: '👓', phrase: 'Put my glasses in my room' }
+  ]}
+}, qp: ['I want', 'I need', 'Please', 'Can you', 'What time', 'Put', 'Help', 'In my room'] };
+
+// ============================================================
+// SPEECH ENGINE
+// ============================================================
+function getVoiceConfig(vid) {
+  const v = EL.voices.find(x => x.id === vid);
+  return v ? v.settings : { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true };
+}
+
+async function elSpeak(text, urg) {
+  const vid = S.voice || EL.voices[0].id;
+  const ck = vid + ':' + text;
+  if (cache.has(ck)) { play(cache.get(ck), urg); return true; }
+  try {
+    const settings = getVoiceConfig(vid);
+    const r = await fetch(EL.url + '/text-to-speech/' + vid, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+      body: JSON.stringify({ text, model_id: EL.model, voice_settings: settings })
+    });
+    if (!r.ok) return false;
+    const b = await r.blob(), u = URL.createObjectURL(b);
+    cache.set(ck, u);
+    if (cache.size > 60) { const o = cache.keys().next().value; URL.revokeObjectURL(cache.get(o)); cache.delete(o); }
+    play(u, urg); return true;
+  } catch (e) { return false; }
+}
+
+function play(u, urg) {
+  if (curAudio) { curAudio.pause(); curAudio = null; }
+  const a = new Audio(u);
+  a.volume = urg ? 1 : parseFloat(ld('vol') || 1);
+  a.playbackRate = parseFloat(ld('rate') || 0.8);
+  curAudio = a;
+  a.onplay = () => { S.speaking = true; $('sbar').classList.add('act'); };
+  a.onended = a.onerror = () => { S.speaking = false; $('sbar').classList.remove('act'); curAudio = null; };
+  a.play().catch(() => { S.speaking = false; $('sbar').classList.remove('act'); });
+}
+
+function fallback(text, urg) {
+  const sy = speechSynthesis; sy.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = parseFloat(ld('rate') || 0.8); u.volume = urg ? 1 : parseFloat(ld('vol') || 1);
+  const v = sy.getVoices();
+  const p = v.find(x => x.lang.startsWith('en') && x.name.toLowerCase().includes('daniel'))
+    || v.find(x => x.lang.startsWith('en') && (x.name.includes('Enhanced') || x.name.includes('Premium')))
+    || v.find(x => x.lang.startsWith('en-US'));
+  if (p) u.voice = p;
+  u.onstart = () => { S.speaking = true; $('sbar').classList.add('act'); };
+  u.onend = () => { S.speaking = false; $('sbar').classList.remove('act'); };
+  sy.speak(u);
+}
+
+async function speak(text, urg, el) {
+  if (!text) return;
+  if (el) { el.classList.add('spk'); setTimeout(() => el.classList.remove('spk'), 800); }
+  S.last = text; S.lastU = urg || false; showLS(text);
+  const ok = await elSpeak(text, urg);
+  if (ok) {
+    if (!S.elOk) {
+      S.elOk = true;
+      $('es').textContent = 'ElevenLabs connected ✓';
+      $('ei').textContent = '🟢';
+    }
+  } else {
+    fallback(text, urg);
+  }
+}
+
+async function testEL() {
+  try {
+    // Some API keys can synthesize speech but do not have voices_read permission.
+    // Health check with a tiny TTS request avoids false "offline" state.
+    const r = await fetch(EL.url + '/text-to-speech/' + (S.voice || EL.voices[0].id), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+      body: JSON.stringify({ text: 'ok', model_id: EL.model, voice_settings: getVoiceConfig(S.voice || EL.voices[0].id) })
+    });
+    if (r.ok) { S.elOk = true; $('es').textContent = 'ElevenLabs connected ✓'; $('ei').textContent = '🟢'; return true; }
+  } catch (e) {}
+  S.elOk = false; $('es').textContent = 'Offline — using device voice'; $('ei').textContent = '🟡'; return false;
+}
+
+async function preCache() {
+  if (!S.elOk) return;
+  const phrases = ['Yes', 'No', 'Thank you', 'I need help right now', 'Hold on, give me a moment',
+    "Can you say that again please?", "I want to stand up please", "I need to go to the bathroom",
+    "I need the suction machine", "I need my drops", "I love you", "I'm in pain"];
+  for (const p of phrases) {
+    const vid = S.voice || EL.voices[0].id, ck = vid + ':' + p;
+    if (cache.has(ck)) continue;
+    try {
+      const settings = getVoiceConfig(vid);
+      const r = await fetch(EL.url + '/text-to-speech/' + vid, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': EL.key },
+        body: JSON.stringify({ text: p, model_id: EL.model, voice_settings: settings })
+      });
+      if (r.ok) { const b = await r.blob(); cache.set(ck, URL.createObjectURL(b)); }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 400));
+  }
+}
+
+// ============================================================
+// UI
+// ============================================================
+function $(id) { return document.getElementById(id); }
+function sv(k, v) { try { localStorage.setItem('ba_' + k, JSON.stringify(v)); } catch (e) {} }
+function ld(k) { try { const v = localStorage.getItem('ba_' + k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+
+let lsT;
+function showLS(t) { $('lst').textContent = t; $('ls').classList.add('vis'); clearTimeout(lsT); lsT = setTimeout(() => $('ls').classList.remove('vis'), 8000); }
+
+function alert_() {
+  $('af').classList.add('act'); setTimeout(() => $('af').classList.remove('act'), 2000);
+  if ('Notification' in window && Notification.permission === 'granted')
+    new Notification("Big Al — Alex Needs Help", { body: 'Alex pressed the help button', requireInteraction: true });
+}
+if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+
+// BOARDS
+function homeBoard() {
+  const b = $('hb'); b.innerHTML = ''; b.classList.remove('hid'); $('sb').classList.add('hid'); $('cv').classList.remove('act'); S.view = 'home';
+  CFG.home.forEach(t => b.appendChild(mkTile(t)));
+}
+function subBoard(cid) {
+  const c = CFG.cats[cid]; if (!c) return;
+  $('hb').classList.add('hid'); $('cv').classList.remove('act');
+  const s = $('sb'); s.classList.remove('hid'); s.innerHTML = ''; S.view = 'cat';
+  const h = document.createElement('div'); h.className = 'shdr';
+  h.innerHTML = '<button class="bb" id="sbk">← Back</button><span class="st">' + c.title + '</span>';
+  s.appendChild(h); h.querySelector('#sbk').addEventListener('click', homeBoard);
+  c.tiles.forEach(t => s.appendChild(mkTile({ ...t, type: t.urgent ? 'urgent' : 'phrase' })));
+}
+function mkTile(t) {
+  const e = document.createElement('div'); e.className = 'tile ' + (t.type || '');
+  e.innerHTML = '<span class="tile-i">' + (t.icon || '') + '</span><span class="tile-l">' + t.label + '</span>';
+  e.addEventListener('click', () => {
+    if (t.type === 'category') subBoard(t.id);
+    else if (t.action === 'compose') showComp();
+    else if (t.phrase) { speak(t.phrase, t.alert || t.urgent, e); if (t.alert) alert_(); }
+  }); return e;
+}
+
+// COMPOSE
+function showComp() { $('hb').classList.add('hid'); $('sb').classList.add('hid'); $('cv').classList.add('act'); S.view = 'compose'; S.txt = ''; updComp(); mkQP(); mkKB(); }
+function updComp() { $('ctxt').textContent = S.txt; }
+function mkQP() { const c = $('qp'); c.innerHTML = ''; CFG.qp.forEach(p => { const b = document.createElement('button'); b.className = 'qpb'; b.textContent = p; b.addEventListener('click', () => { S.txt += (S.txt && !S.txt.endsWith(' ') ? ' ' : '') + p + ' '; updComp(); }); c.appendChild(b); }); }
+function mkKB() { const c = $('kb'); c.innerHTML = ''; [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L',"'"],['Z','X','C','V',' ','B','N','M','.',',']].forEach(r => r.forEach(k => { const b = document.createElement('button'); b.className = 'k' + (k === ' ' ? ' spc' : ''); b.textContent = k === ' ' ? 'SPACE' : k; b.addEventListener('click', () => { S.txt += k === ' ' ? ' ' : k; updComp(); }); c.appendChild(b); })); }
+
+$('cBk').addEventListener('click', homeBoard);
+$('cCl').addEventListener('click', () => { S.txt = ''; updComp(); });
+$('cBs').addEventListener('click', () => { S.txt = S.txt.slice(0, -1); updComp(); });
+$('cSp').addEventListener('click', () => { if (S.txt.trim()) speak(S.txt.trim()); });
+
+// REPEAT
+$('bRpt').addEventListener('click', () => { if (S.last) speak(S.last, S.lastU); });
+$('bRptB').addEventListener('click', () => { if (S.last) speak(S.last, S.lastU); });
+
+// SETTINGS
+$('bSet').addEventListener('click', () => $('sOv').classList.add('act'));
+$('sX').addEventListener('click', () => $('sOv').classList.remove('act'));
+$('sOv').addEventListener('click', e => { if (e.target.id === 'sOv') $('sOv').classList.remove('act'); });
+$('rs').addEventListener('input', e => { $('rv').textContent = e.target.value; sv('rate', e.target.value); });
+
+// VOICE PICKER
+$('oVP').addEventListener('click', () => { $('sOv').classList.remove('act'); $('vOv').classList.add('act'); mkVP(); });
+$('vX').addEventListener('click', () => $('vOv').classList.remove('act'));
+$('vOv').addEventListener('click', e => { if (e.target.id === 'vOv') $('vOv').classList.remove('act'); });
+
+function mkVP() {
+  const g = $('vg'); g.innerHTML = '';
+  const saved = ld('voice') || EL.voices[0].id;
+  EL.voices.forEach(v => {
+    const c = document.createElement('div');
+    c.className = 'vc' + (v.id === saved ? ' sel' : '') + (v.isAlex ? ' alex' : '');
+    c.innerHTML = '<div class="vc-n">' + v.name + '</div><div class="vc-d">' + v.desc + '</div><button class="vc-p" data-id="' + v.id + '">▶ Preview</button>';
+    c.addEventListener('click', e => {
+      if (e.target.classList.contains('vc-p')) return;
+      document.querySelectorAll('.vc').forEach(x => x.classList.remove('sel')); c.classList.add('sel');
+      S.voice = v.id; sv('voice', v.id); $('cvn').textContent = v.name;
+      $('vst').textContent = 'Selected: ' + v.name; $('vst').className = 'vs ok';
+    });
+    c.querySelector('.vc-p').addEventListener('click', async e => {
+      e.stopPropagation(); const btn = e.target; if (btn.classList.contains('ld')) return;
+      btn.classList.add('ld'); btn.textContent = '⏳ Loading...';
+      const old = S.voice; S.voice = v.id;
+      const ok = await elSpeak(EL.sample);
+      S.voice = old; btn.classList.remove('ld'); btn.textContent = '▶ Preview';
+      if (!ok) { $('vst').textContent = 'Preview failed — check connection'; $('vst').className = 'vs err'; }
+    });
+    g.appendChild(c);
+  });
+  const cur = EL.voices.find(v => v.id === saved);
+  if (cur) $('cvn').textContent = cur.name;
+}
+
+// INIT
+async function init() {
+  const rate = ld('rate'), voice = ld('voice');
+  if (rate) { $('rs').value = rate; $('rv').textContent = rate; }
+  else { $('rs').value = '0.8'; $('rv').textContent = '0.8'; }
+  // Default to Alex's cloned voice
+  if (voice) { S.voice = voice; const v = EL.voices.find(x => x.id === voice); if (v) $('cvn').textContent = v.name; }
+  else { S.voice = EL.voices[0].id; $('cvn').textContent = EL.voices[0].name; sv('voice', EL.voices[0].id); }
+  homeBoard();
+  const ok = await testEL();
+  if (ok) setTimeout(preCache, 1000);
+  if (window.speechSynthesis) { speechSynthesis.getVoices(); if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); }
+}
+init();
+</script>
+</body>
+</html>

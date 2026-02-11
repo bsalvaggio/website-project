@@ -16,3 +16,6 @@ terraform/.terraform.lock.hcl
 # Old Vue project artifacts (if any linger)
 node_modules/
 dist/
+
+# Parallel standalone app repo
+bigal-app/
